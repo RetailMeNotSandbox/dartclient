@@ -1639,14 +1639,18 @@ definitions:
     properties:
       created:
         type: string
+        x-nullable: true
       data:
         $ref: '#/definitions/ActionData'
       id:
         type: string
+        x-nullable: true
       updated:
         type: string
+        x-nullable: true
       version_id:
         type: integer
+        x-nullable: true
     required:
     - data
     type: object
@@ -1666,29 +1670,37 @@ definitions:
         additionalProperties: false
         properties: {}
         type: object
+        x-nullable: true
       datastore_id:
         type: string
+        x-nullable: true
       ecs_task_arn:
         type: string
+        x-nullable: true
       end_time:
         type: string
+        x-nullable: true
       engine_name:
         type: string
       error_message:
         type: string
+        x-nullable: true
         x-schema-form:
           type: textarea
       extra_data:
         type: object
+        x-nullable: true
       first_in_workflow:
         default: false
         type: boolean
+        x-nullable: true
       last_in_workflow:
         default: false
         type: boolean
+        x-nullable: true
       name:
         maxLength: 50
-        pattern: /^[a-zA-Z0-9_-]+$/
+        pattern: ^[a-zA-Z0-9_-]+$
         type: string
       on_failure:
         default: DEACTIVATE
@@ -1701,7 +1713,7 @@ definitions:
       on_failure_email:
         default: []
         items:
-          pattern: /^\S+@\S+$/
+          pattern: ^\S+@\S+$
           type: string
         minItems: 0
         type: array
@@ -1711,7 +1723,7 @@ definitions:
       on_success_email:
         default: []
         items:
-          pattern: /^\S+@\S+$/
+          pattern: ^\S+@\S+$
           type: string
         minItems: 0
         type: array
@@ -1721,12 +1733,16 @@ definitions:
       order_idx:
         minimum: 0.0
         type: number
+        x-nullable: true
       progress:
         type: number
+        x-nullable: true
       queued_time:
         type: string
+        x-nullable: true
       start_time:
         type: string
+        x-nullable: true
       state:
         default: HAS_NEVER_RUN
         enum:
@@ -1743,23 +1759,32 @@ definitions:
         default: []
         items:
           maxLength: 30
-          pattern: /^[a-zA-Z0-9_]+$/
+          pattern: ^[a-zA-Z0-9_]+$
           type: string
         minItems: 0
         type: array
         x-schema-form:
           title: '{{ value || ''tag '' + $index }}'
           type: tabarray
+      user_id:
+        default: unknown
+        maxLength: 64
+        pattern: ^[a-zA-Z0-9_-]+$
+        type: string
       workflow_action_id:
         type: string
+        x-nullable: true
       workflow_id:
         type: string
+        x-nullable: true
       workflow_instance_id:
         type: string
+        x-nullable: true
     required:
     - action_type_name
     - engine_name
     - name
+    - user_id
     type: object
   ActionResponse:
     properties:
@@ -1776,6 +1801,7 @@ definitions:
         type: string
       params_json_schema:
         type: object
+        x-nullable: true
     type: object
   Column:
     additionalProperties: false
@@ -1797,24 +1823,31 @@ definitions:
         type: string
       date_pattern:
         type: string
+        x-nullable: true
       description:
         type: string
+        x-nullable: true
       is_nullable:
         default: true
         type: boolean
+        x-nullable: true
       length:
         minimum: 1
         type: integer
+        x-nullable: true
       name:
         maxLength: 255
-        pattern: /^[a-zA-Z0-9_]+$/
+        pattern: ^[a-zA-Z0-9_]+$
         type: string
       path:
         type: string
+        x-nullable: true
       precision:
         type: integer
+        x-nullable: true
       scale:
         type: integer
+        x-nullable: true
     required:
     - name
     - data_type
@@ -1824,8 +1857,10 @@ definitions:
     properties:
       delimited_by:
         type: string
+        x-nullable: true
       escaped_by:
         type: string
+        x-nullable: true
       file_format:
         enum:
         - TEXTFILE
@@ -1834,16 +1869,20 @@ definitions:
         type: string
       null_string:
         type: string
+        x-nullable: true
       num_header_rows:
         default: 0
         minimum: 0
         type: integer
       quoted_by:
         type: string
+        x-nullable: true
       regex_input:
         type: string
+        x-nullable: true
       regex_output:
         type: string
+        x-nullable: true
       row_format:
         enum:
         - DELIMITED
@@ -1860,14 +1899,18 @@ definitions:
     properties:
       created:
         type: string
+        x-nullable: true
       data:
         $ref: '#/definitions/DatasetData'
       id:
         type: string
+        x-nullable: true
       updated:
         type: string
+        x-nullable: true
       version_id:
         type: integer
+        x-nullable: true
     required:
     - data
     type: object
@@ -1878,7 +1921,7 @@ definitions:
         default: []
         items:
           maxLength: 127
-          pattern: /^[a-zA-Z0-9_]+ (ASC|DESC)$/
+          pattern: ^[a-zA-Z0-9_]+ (ASC|DESC)$
           type: string
         type: array
         x-schema-form:
@@ -1903,11 +1946,12 @@ definitions:
         $ref: '#/definitions/DataFormat'
       description:
         type: string
+        x-nullable: true
       distribution_keys:
         default: []
         items:
           maxLength: 127
-          pattern: /^[a-zA-Z0-9_]+$/
+          pattern: ^[a-zA-Z0-9_]+$
           type: string
         type: array
         x-schema-form:
@@ -1916,6 +1960,7 @@ definitions:
       hive_compatible_partition_folders:
         default: false
         type: boolean
+        x-nullable: true
       load_type:
         enum:
         - INSERT
@@ -1924,13 +1969,13 @@ definitions:
         - RELOAD_LAST
         type: string
       location:
-        pattern: /^s3://.+$/
+        pattern: ^s3://.+$
         type: string
       merge_keys:
         default: []
         items:
           maxLength: 127
-          pattern: /^[a-zA-Z0-9_]+$/
+          pattern: ^[a-zA-Z0-9_]+$
           type: string
         type: array
         x-schema-form:
@@ -1938,15 +1983,14 @@ definitions:
           type: tabarray
       name:
         maxLength: 50
-        pattern: /^[a-zA-Z0-9_-]+$/
+        pattern: ^[a-zA-Z0-9_-]+$
         type: string
       partitions:
         items:
           $ref: '#/definitions/Column'
         minItems: 0
-        type:
-        - array
-        - 'null'
+        type: array
+        x-nullable: true
         x-schema-form:
           title: '{{ value.name || ''column '' + $index }}'
           type: tabarray
@@ -1954,7 +1998,7 @@ definitions:
         default: []
         items:
           maxLength: 127
-          pattern: /^[a-zA-Z0-9_]+$/
+          pattern: ^[a-zA-Z0-9_]+$
           type: string
         type: array
         x-schema-form:
@@ -1964,7 +2008,7 @@ definitions:
         default: []
         items:
           maxLength: 127
-          pattern: /^[a-zA-Z0-9_]+$/
+          pattern: ^[a-zA-Z0-9_]+$
           type: string
         type: array
         x-schema-form:
@@ -1972,19 +2016,24 @@ definitions:
           type: tabarray
       table_name:
         minLength: 1
-        pattern: /^[a-zA-Z0-9_]+$/
+        pattern: ^[a-zA-Z0-9_]+$
         type: string
       tags:
         default: []
         items:
           maxLength: 30
-          pattern: /^[a-zA-Z0-9_]+$/
+          pattern: ^[a-zA-Z0-9_]+$
           type: string
         minItems: 0
         type: array
         x-schema-form:
           title: '{{ value || ''tag '' + $index }}'
           type: tabarray
+      user_id:
+        default: unknown
+        maxLength: 64
+        pattern: ^[a-zA-Z0-9_-]+$
+        type: string
     required:
     - name
     - table_name
@@ -1993,6 +2042,7 @@ definitions:
     - data_format
     - columns
     - compression
+    - user_id
     type: object
   DatasetResponse:
     properties:
@@ -2004,14 +2054,18 @@ definitions:
     properties:
       created:
         type: string
+        x-nullable: true
       data:
         $ref: '#/definitions/DatastoreData'
       id:
         type: string
+        x-nullable: true
       updated:
         type: string
+        x-nullable: true
       version_id:
         type: integer
+        x-nullable: true
     required:
     - data
     type: object
@@ -2019,7 +2073,8 @@ definitions:
     additionalProperties: false
     properties:
       args:
-        type: 'null'
+        type: object
+        x-nullable: true
       concurrency:
         default: 1
         maximum: 10
@@ -2027,23 +2082,29 @@ definitions:
         type: integer
       connection_url:
         type: string
+        x-nullable: true
       engine_name:
-        pattern: /^[a-zA-Z0-9_]+$/
+        pattern: ^[a-zA-Z0-9_]+$
         type: string
       extra_data:
         type: object
+        x-nullable: true
       host:
         type: string
+        x-nullable: true
       name:
         maxLength: 50
-        pattern: /^[a-zA-Z0-9_-]+$/
+        pattern: ^[a-zA-Z0-9_-]+$
         type: string
       port:
         type: integer
+        x-nullable: true
       s3_artifacts_path:
         type: string
+        x-nullable: true
       s3_logs_path:
         type: string
+        x-nullable: true
       state:
         default: INACTIVE
         enum:
@@ -2056,18 +2117,26 @@ definitions:
         default: []
         items:
           maxLength: 30
-          pattern: /^[a-zA-Z0-9_]+$/
+          pattern: ^[a-zA-Z0-9_]+$
           type: string
         minItems: 0
         type: array
         x-schema-form:
           title: '{{ value || ''tag '' + $index }}'
           type: tabarray
+      user_id:
+        default: unknown
+        maxLength: 64
+        pattern: ^[a-zA-Z0-9_-]+$
+        type: string
       workflow_datastore_id:
         type: string
+        x-nullable: true
     required:
     - name
     - engine_name
+    - args
+    - user_id
     type: object
   DatastoreResponse:
     properties:
@@ -2079,14 +2148,18 @@ definitions:
     properties:
       created:
         type: string
+        x-nullable: true
       data:
         $ref: '#/definitions/EngineData'
       id:
         type: string
+        x-nullable: true
       updated:
         type: string
+        x-nullable: true
       version_id:
         type: integer
+        x-nullable: true
     required:
     - data
     type: object
@@ -2095,16 +2168,20 @@ definitions:
     properties:
       description:
         type: string
+        x-nullable: true
       ecs_task_definition:
         type: object
+        x-nullable: true
       ecs_task_definition_arn:
         type: string
+        x-nullable: true
       name:
         maxLength: 50
-        pattern: /^[a-zA-Z0-9_-]+$/
+        pattern: ^[a-zA-Z0-9_-]+$
         type: string
       options_json_schema:
         type: object
+        x-nullable: true
       supported_action_types:
         items:
           $ref: '#/definitions/ActionType'
@@ -2117,15 +2194,21 @@ definitions:
         default: []
         items:
           maxLength: 30
-          pattern: /^[a-zA-Z0-9_]+$/
+          pattern: ^[a-zA-Z0-9_]+$
           type: string
         minItems: 0
         type: array
         x-schema-form:
           title: '{{ value || ''tag '' + $index }}'
           type: tabarray
+      user_id:
+        default: unknown
+        maxLength: 64
+        pattern: ^[a-zA-Z0-9_-]+$
+        type: string
     required:
     - name
+    - user_id
     type: object
   EngineResponse:
     properties:
@@ -2146,14 +2229,18 @@ definitions:
     properties:
       created:
         type: string
+        x-nullable: true
       data:
         $ref: '#/definitions/EventData'
       id:
         type: string
+        x-nullable: true
       updated:
         type: string
+        x-nullable: true
       version_id:
         type: integer
+        x-nullable: true
     required:
     - data
     type: object
@@ -2162,9 +2249,10 @@ definitions:
     properties:
       description:
         type: string
+        x-nullable: true
       name:
         maxLength: 50
-        pattern: /^[a-zA-Z0-9_-]+$/
+        pattern: ^[a-zA-Z0-9_-]+$
         type: string
       state:
         default: INACTIVE
@@ -2176,15 +2264,21 @@ definitions:
         default: []
         items:
           maxLength: 30
-          pattern: /^[a-zA-Z0-9_]+$/
+          pattern: ^[a-zA-Z0-9_]+$
           type: string
         minItems: 0
         type: array
         x-schema-form:
           title: '{{ value || ''tag '' + $index }}'
           type: tabarray
+      user_id:
+        default: unknown
+        maxLength: 64
+        pattern: ^[a-zA-Z0-9_-]+$
+        type: string
     required:
     - name
+    - user_id
     type: object
   EventResponse:
     properties:
@@ -2471,14 +2565,18 @@ definitions:
     properties:
       created:
         type: string
+        x-nullable: true
       data:
         $ref: '#/definitions/SubscriptionData'
       id:
         type: string
+        x-nullable: true
       updated:
         type: string
+        x-nullable: true
       version_id:
         type: integer
+        x-nullable: true
     required:
     - data
     type: object
@@ -2489,20 +2587,24 @@ definitions:
         type: string
       failed_time:
         type: string
+        x-nullable: true
       generating_time:
         type: string
+        x-nullable: true
       initial_active_time:
         type: string
+        x-nullable: true
       message_id:
         type: string
+        x-nullable: true
       name:
         maxLength: 50
-        pattern: /^[a-zA-Z0-9_-]+$/
+        pattern: ^[a-zA-Z0-9_-]+$
         type: string
       on_failure_email:
         default: []
         items:
-          pattern: /^\S+@\S+$/
+          pattern: ^\S+@\S+$
           type: string
         minItems: 0
         type: array
@@ -2512,7 +2614,7 @@ definitions:
       on_success_email:
         default: []
         items:
-          pattern: /^\S+@\S+$/
+          pattern: ^\S+@\S+$
           type: string
         minItems: 0
         type: array
@@ -2521,17 +2623,21 @@ definitions:
           type: tabarray
       queued_time:
         type: string
+        x-nullable: true
       s3_path_end_prefix_exclusive:
         description: The exclusive s3 path end prefix
-        pattern: /^s3://.+$/
+        pattern: ^s3://.+$
         type: string
+        x-nullable: true
       s3_path_regex_filter:
         description: A regex pattern the s3 path must match
         type: string
+        x-nullable: true
       s3_path_start_prefix_inclusive:
         description: The inclusive s3 path start prefix
-        pattern: /^s3://.+$/
+        pattern: ^s3://.+$
         type: string
+        x-nullable: true
       state:
         default: INACTIVE
         enum:
@@ -2545,16 +2651,22 @@ definitions:
         default: []
         items:
           maxLength: 30
-          pattern: /^[a-zA-Z0-9_]+$/
+          pattern: ^[a-zA-Z0-9_]+$
           type: string
         minItems: 0
         type: array
         x-schema-form:
           title: '{{ value || ''tag '' + $index }}'
           type: tabarray
+      user_id:
+        default: unknown
+        maxLength: 64
+        pattern: ^[a-zA-Z0-9_-]+$
+        type: string
     required:
     - name
     - dataset_id
+    - user_id
     type: object
   SubscriptionElement:
     type: object
@@ -2568,14 +2680,18 @@ definitions:
     properties:
       created:
         type: string
+        x-nullable: true
       data:
         $ref: '#/definitions/TriggerData'
       id:
         type: string
+        x-nullable: true
       updated:
         type: string
+        x-nullable: true
       version_id:
         type: integer
+        x-nullable: true
     required:
     - data
     type: object
@@ -2586,9 +2702,10 @@ definitions:
         type: object
       extra_data:
         type: object
+        x-nullable: true
       name:
         maxLength: 50
-        pattern: /^[a-zA-Z0-9_-]+$/
+        pattern: ^[a-zA-Z0-9_-]+$
         type: string
       state:
         default: INACTIVE
@@ -2600,7 +2717,7 @@ definitions:
         default: []
         items:
           maxLength: 30
-          pattern: /^[a-zA-Z0-9_]+$/
+          pattern: ^[a-zA-Z0-9_]+$
           type: string
         minItems: 0
         type: array
@@ -2608,6 +2725,11 @@ definitions:
           title: '{{ value || ''tag '' + $index }}'
           type: tabarray
       trigger_type_name:
+        type: string
+      user_id:
+        default: unknown
+        maxLength: 64
+        pattern: ^[a-zA-Z0-9_-]+$
         type: string
       workflow_ids:
         default: []
@@ -2622,6 +2744,7 @@ definitions:
     - name
     - trigger_type_name
     - args
+    - user_id
     type: object
   TriggerResponse:
     properties:
@@ -2642,14 +2765,18 @@ definitions:
     properties:
       created:
         type: string
+        x-nullable: true
       data:
         $ref: '#/definitions/WorkflowData'
       id:
         type: string
+        x-nullable: true
       updated:
         type: string
+        x-nullable: true
       version_id:
         type: integer
+        x-nullable: true
     required:
     - data
     type: object
@@ -2665,9 +2792,10 @@ definitions:
         type: string
       engine_name:
         type: string
+        x-nullable: true
       name:
         maxLength: 50
-        pattern: /^[a-zA-Z0-9_-]+$/
+        pattern: ^[a-zA-Z0-9_-]+$
         type: string
       on_failure:
         default: DEACTIVATE
@@ -2679,7 +2807,7 @@ definitions:
       on_failure_email:
         default: []
         items:
-          pattern: /^\S+@\S+$/
+          pattern: ^\S+@\S+$
           type: string
         minItems: 0
         type: array
@@ -2689,7 +2817,7 @@ definitions:
       on_started_email:
         default: []
         items:
-          pattern: /^\S+@\S+$/
+          pattern: ^\S+@\S+$
           type: string
         minItems: 0
         type: array
@@ -2699,7 +2827,7 @@ definitions:
       on_success_email:
         default: []
         items:
-          pattern: /^\S+@\S+$/
+          pattern: ^\S+@\S+$
           type: string
         minItems: 0
         type: array
@@ -2716,30 +2844,40 @@ definitions:
         default: []
         items:
           maxLength: 30
-          pattern: /^[a-zA-Z0-9_]+$/
+          pattern: ^[a-zA-Z0-9_]+$
           type: string
         minItems: 0
         type: array
         x-schema-form:
           title: '{{ value || ''tag '' + $index }}'
           type: tabarray
+      user_id:
+        default: unknown
+        maxLength: 64
+        pattern: ^[a-zA-Z0-9_-]+$
+        type: string
     required:
     - name
     - datastore_id
+    - user_id
     type: object
   WorkflowInstance:
     additionalProperties: false
     properties:
       created:
         type: string
+        x-nullable: true
       data:
         $ref: '#/definitions/WorkflowInstanceData'
       id:
         type: string
+        x-nullable: true
       updated:
         type: string
+        x-nullable: true
       version_id:
         type: integer
+        x-nullable: true
     required:
     - data
     type: object
@@ -2750,16 +2888,20 @@ definitions:
         type: string
       end_time:
         type: string
+        x-nullable: true
       engine_name:
         type: string
       error_message:
         type: string
+        x-nullable: true
         x-schema-form:
           type: textarea
       queued_time:
         type: string
+        x-nullable: true
       start_time:
         type: string
+        x-nullable: true
       state:
         default: QUEUED
         enum:
@@ -2772,7 +2914,7 @@ definitions:
         default: []
         items:
           maxLength: 30
-          pattern: /^[a-zA-Z0-9_]+$/
+          pattern: ^[a-zA-Z0-9_]+$
           type: string
         minItems: 0
         type: array
@@ -2783,8 +2925,15 @@ definitions:
         type: string
       trigger_type:
         type: string
+      user_id:
+        default: unknown
+        maxLength: 64
+        pattern: ^[a-zA-Z0-9_-]+$
+        type: string
       workflow_id:
         type: string
+    required:
+    - user_id
     type: object
   WorkflowInstanceResponse:
     properties:

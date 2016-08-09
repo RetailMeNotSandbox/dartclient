@@ -1,26 +1,57 @@
-from bravado.client import SwaggerClient, CONFIG_DEFAULTS
-from bravado.requests_client import RequestsClient
-from bravado_core.spec import Spec
+# Monkey patch bravado to work around null object values
+# import bravado_core.unmarshal
+# old_unmarshal_object = bravado_core.unmarshal.unmarshal_object
+#
+#
+# def _unmarshal_object(swagger_spec, object_spec, object_value):
+#     if object_value is None:
+#         return None
+#     return old_unmarshal_object(swagger_spec, object_spec, object_value)
+#
+# bravado_core.unmarshal.unmarshal_object = _unmarshal_object
+# End monkey patch
+
+from bravado.client import SwaggerClient
 
 import pkg_resources
 import yaml
+
+###
+# import requests
+# import logging
+#
+# try:
+#     import httplib
+# except ImportError:
+#     import http.client as httplib
+#
+# httplib.HTTPConnection.debuglevel = 1
+#
+# logging.basicConfig()
+# logging.getLogger().setLevel(logging.DEBUG)
+# requests_log = logging.getLogger("requests.packages.urllib3")
+# requests_log.setLevel(logging.DEBUG)
+# requests_log.propagate = True
+###
 
 # Load the swagger from the resource file
 with pkg_resources.resource_stream('dartclient', 'swagger.yaml') as f:
     spec_dict = yaml.load(f)
 
-# Construct the Spec by hand to gain access to the api_url property
-swagger_spec = Spec.from_dict(
-    spec_dict,
-    origin_url=None,
-    http_client=RequestsClient(),
-    config=dict(CONFIG_DEFAULTS, **({})))
+origin_url = 'http://dart.reporting.rmn.io/api/1'
+
+config = {
+#    'validate_swagger_spec': False,
+#    'validate_requests': False,
+#    'validate_responses': False,
+#    'use_models': False
+}
 
 # Create the client so that we can get to the models and APIs.
 # It's annoying that the creators of Bravado decided to do things
 # in this way, since it makes it difficult to build a module that
 # mimics the output of swagger-codegen
-client = SwaggerClient(swagger_spec)
+client = SwaggerClient.from_spec(spec_dict, origin_url=origin_url, config=config)
 
 # import models into sdk package
 Action = client.get_model('Action')
