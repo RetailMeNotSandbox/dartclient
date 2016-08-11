@@ -368,8 +368,8 @@ paths:
             $ref: "#/definitions/OKResponse"
   /datastore/{datastore_id}/action:
     post:
-      operationId: createDatastoreAction
-      summary: "create an action for a datastore"
+      operationId: createDatastoreActions
+      summary: "create actions for a datastore"
       tags:
         - "Datastore"
         - "Action"
@@ -395,7 +395,7 @@ paths:
         "200":
           description: "the created actions"
           schema:
-            $ref: '#/definitions/ActionResponse'
+            $ref: '#/definitions/ActionsResponse'
   /datastore/{datastore_id}/workflow:
     post:
       operationId: createDatastoreWorkflow
@@ -1470,8 +1470,8 @@ paths:
             $ref: "#/definitions/OKResponse"
   /workflow/{workflow_id}/action:
     post:
-      operationId: createWorkflowAction
-      summary: "create an action for a workflow"
+      operationId: createWorkflowActions
+      summary: "create actions for a workflow"
       tags:
         - "Workflow"
         - "Action"
@@ -1498,7 +1498,7 @@ paths:
         "200":
           description: "the created actions"
           schema:
-            $ref: '#/definitions/ActionResponse'
+            $ref: '#/definitions/ActionsResponse'
   /workflow/{workflow_id}/do-manual-trigger:
     post:
       operationId: triggerWorkflow
@@ -1667,9 +1667,13 @@ definitions:
       action_type_name:
         type: string
       args:
-        additionalProperties: false
-        properties: {}
         type: object
+        x-nullable: true
+      avg_runtime:
+        type: string
+        x-nullable: true
+      completed_runs:
+        type: number
         x-nullable: true
       datastore_id:
         type: string
@@ -1790,6 +1794,13 @@ definitions:
     properties:
       results:
         $ref: '#/definitions/Action'
+    type: object
+  ActionsResponse:
+    properties:
+      results:
+        items:
+          $ref: '#/definitions/Action'
+        type: array
     type: object
   ActionResult:
     type: object
@@ -2783,6 +2794,9 @@ definitions:
   WorkflowData:
     additionalProperties: false
     properties:
+      avg_runtime:
+        type: string
+        x-nullable: true
       concurrency:
         default: 1
         maximum: 10

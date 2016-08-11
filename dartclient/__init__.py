@@ -136,3 +136,81 @@ TriggerApi = client.Trigger
 TriggerTypeApi = client.TriggerType
 WorkflowApi = client.Workflow
 WorkflowInstanceApi = client.WorkflowInstance
+
+
+def debug_callback(response, operation):
+    print(response.text)
+
+
+DEBUG_ARGS = {
+    '_request_options': {
+        'response_callbacks': [
+            debug_callback
+        ]
+    }
+}
+
+
+class SyncManager(object):
+    """
+    Provides convenient methods for synchronizing descriptions of the Dart workflow with the Dart server.
+    """
+
+    def __init__(self, client):
+        self.client = client
+        self.datastore_api = client.Datastore
+        self.workflow_api = client.Workflow
+        self.action_api = client.Action
+
+    def sync_datastore(self, datastore_name, callback):
+        """
+        Synchronize a datastore with Dart.
+
+        :param datastore_name: The name of the datastore.
+        :param callback: A function with a signature (datastore) => datastore
+        :return: The created or updated datastore.
+        """
+        response = self.datastore_api.listDatastores(filters='["name = %s"]' % (datastore_name,), limit=20, offset=0).result()
+        if response.total > 0:
+            datastore = callback(response.results[0])
+            response = self.datastore_api.updateDatastore(datastore_id=datastore.id, datastore=datastore).result()
+            return response.results
+        else:
+            datastore = callback(Datastore(data=DatastoreData()))
+            response = self.datastore_api.createDatastore(datastore=datastore).result()
+            return response.results
+
+    def sync_workflow(self, workflow_name, datastore, callback):
+        """
+        Synchronize a workflow with Dart.
+
+        :param workflow_name: The name of the workflow.
+        :param datastore: The datastore containing the workflow.
+        :param callback: A function with a signature (workflow) => workflow
+        :return: The created or updated workflow.
+        """
+        response = self.workflow_api.listWorkflows(filters='["name = %s"]' % (workflow_name,), limit=20, offset=0).result()
+        if response.total > 0:
+            workflow = callback(response.results[0])
+            response = self.workflow_api.updateWorkflow(workflow_id=workflow.id, workflow=workflow).result()
+            return response.results
+        else:
+            workflow = callback(Workflow(data=WorkflowData()))
+            workflow.data.datastore_id = datastore.id
+            response = self.datastore_api.createDatastoreWorkflow(datastore_id=datastore.id, workflow=workflow).result()
+            return response.results
+
+    def sync_action(self, action_name, workflow, callback):
+        response = ActionApi.listActions(filters='["name = %s"]' % (action_name,), limit=20, offset=0).result()
+        if response.total > 0:
+            action = callback(response.results[0])
+            response = self.action_api.updateAction(action_id=action.id, action=action).result()
+            return response.results
+        else:
+            action = callback(Action(data=ActionData()))
+            response = self.workflow_api.createWorkflowActions(workflow_id=workflow.id, actions=[action]).result()
+            return response.results
+
+
+def create_sync_manager():
+    return SyncManager(client=client)
