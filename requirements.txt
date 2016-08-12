@@ -1,6 +1,6 @@
 attrs==16.0.0
 bravado==8.3.0
-bravado-core==4.3.0
+-e git+git@github.com:zroadhouse-rmn/bravado-core.git@86441d10720867cf3972897436d76182f6dd2443#egg=bravado_core
 cffi==1.7.0
 crochet==1.5.0
 cryptography==1.4
