@@ -1,0 +1,3 @@
+include *.rst *.txt tox.ini .travis.yml .coveragerc conftest.py
+recursive-include dartclient *.yaml
+recursive-include tests *.py

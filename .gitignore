@@ -2,4 +2,5 @@
 *.iml
 *.egg-info/
 *.pyc
-
+.tox/
+.cache/
