@@ -4,7 +4,7 @@ from dartclient.core import create_sync_manager
 
 
 @pytest.mark.integrationtest
-def test_synchronization(dart_client):
+def test_synchronization(dart_client, clean=False):
     # Build the Dart model
     model = TestDartModel(client=dart_client)
     try:
@@ -21,7 +21,8 @@ def test_synchronization(dart_client):
         model.validate()
     finally:
         # Clean a final time
-        model.clean()
+        if clean:
+            model.clean()
 
 
 class TestDartModel(object):
@@ -51,22 +52,10 @@ class TestDartModel(object):
             model_defaults=self.DEFAULTS)
 
     def clean(self):
-        """
-        Delete all the entities in Dart associated with this model in
-        the opposite order of creation.
-        """
-        self.sync_manager.delete_dataset_by_name(self.DATASET1_NAME)
-        self.sync_manager.delete_trigger_by_name(self.TRIGGER1_NAME)
-        self.sync_manager.delete_action_by_name(self.ACTION2_NAME)
-        self.sync_manager.delete_action_by_name(self.ACTION1_NAME)
-        self.sync_manager.delete_workflow_by_name(self.WORKFLOW1_NAME)
-        self.sync_manager.delete_datastore_by_name(self.DATASTORE1_NAME)
+        self.sync_manager.clean_datastore(self.sync_manager.find_datastore(self.DATASTORE1_NAME))
+        self.sync_manager.clean_dataset(self.sync_manager.find_dataset(self.DATASET1_NAME))
 
     def synchronize(self):
-        """
-        Synchronize this model with Dart and ensure that all entities
-        are created or updated.
-        """
         ds = self.sync_manager.sync_datastore(self.DATASTORE1_NAME, self.define_datastore1)
         wf = self.sync_manager.sync_workflow(self.WORKFLOW1_NAME, ds, self.define_workflow1)
         self.sync_manager.sync_action(self.ACTION1_NAME, wf, self.define_action1)
@@ -142,27 +131,23 @@ class TestDartModel(object):
         Assert that the entities do not exist in Dart.
         :return:
         """
-        assert self.sync_manager.find_datastore_by_name(self.DATASTORE1_NAME) is None
-        assert self.sync_manager.find_workflow_by_name(self.WORKFLOW1_NAME) is None
-        assert self.sync_manager.find_action_by_name(self.ACTION1_NAME) is None
-        assert self.sync_manager.find_action_by_name(self.ACTION2_NAME) is None
-        assert self.sync_manager.find_trigger_by_name(self.TRIGGER1_NAME) is None
-        assert self.sync_manager.find_dataset_by_name(self.DATASET1_NAME) is None
+        assert self.sync_manager.find_datastore(self.DATASTORE1_NAME) is None
+        assert self.sync_manager.find_dataset(self.DATASET1_NAME) is None
 
     def validate(self):
         """
         Validate that the entities in Dart are what this class defined them to be.
         :return:
         """
-        self.validate_datastore1()
-        self.validate_workflow1()
-        self.validate_action1()
-        self.validate_action2()
-        self.validate_trigger1()
+        ds = self.validate_datastore1()
+        wf = self.validate_workflow1(ds)
+        self.validate_action1(wf)
+        self.validate_action2(wf)
+        self.validate_trigger1(wf)
         self.validate_dataset1()
 
     def validate_datastore1(self):
-        datastore = self.sync_manager.find_datastore_by_name(self.DATASTORE1_NAME)
+        datastore = self.sync_manager.find_datastore(self.DATASTORE1_NAME)
         self.validate_object(datastore)
 
         assert datastore.data.args == {
@@ -175,17 +160,19 @@ class TestDartModel(object):
         assert datastore.data.concurrency == 1
         assert datastore.data.engine_name == 'emr_engine'
         assert datastore.data.name == self.DATASTORE1_NAME
+        return datastore
 
-    def validate_workflow1(self):
-        workflow = self.sync_manager.find_workflow_by_name(self.WORKFLOW1_NAME)
+    def validate_workflow1(self, datastore):
+        workflow = self.sync_manager.find_workflow(self.WORKFLOW1_NAME, datastore)
         self.validate_object(workflow)
 
         assert workflow.data.concurrency == 1
         assert workflow.data.engine_name == 'emr_engine'
         assert workflow.data.name == self.WORKFLOW1_NAME
+        return workflow
 
-    def validate_action1(self):
-        action = self.sync_manager.find_action_by_name(self.ACTION1_NAME)
+    def validate_action1(self, workflow):
+        action = self.sync_manager.find_action(self.ACTION1_NAME, workflow)
         self.validate_object(action)
 
         assert action.data.action_type_name == 'start_datastore'
@@ -194,8 +181,8 @@ class TestDartModel(object):
         assert action.data.order_idx == 0
         assert action.data.state == 'TEMPLATE'
 
-    def validate_action2(self):
-        action = self.sync_manager.find_action_by_name(self.ACTION2_NAME)
+    def validate_action2(self, workflow):
+        action = self.sync_manager.find_action(self.ACTION2_NAME, workflow)
         self.validate_object(action)
 
         assert action.data.action_type_name == 'terminate_datastore'
@@ -204,8 +191,8 @@ class TestDartModel(object):
         assert action.data.order_idx == 1
         assert action.data.state == 'TEMPLATE'
 
-    def validate_trigger1(self):
-        trigger = self.sync_manager.find_trigger_by_name(self.TRIGGER1_NAME)
+    def validate_trigger1(self, workflow):
+        trigger = self.sync_manager.find_trigger(self.TRIGGER1_NAME, workflow)
         self.validate_object(trigger)
 
         assert trigger.data.args == {
@@ -215,7 +202,7 @@ class TestDartModel(object):
         assert trigger.data.trigger_type_name == 'scheduled'
 
     def validate_dataset1(self):
-        dataset = self.sync_manager.find_dataset_by_name(self.DATASET1_NAME)
+        dataset = self.sync_manager.find_dataset(self.DATASET1_NAME)
         self.validate_object(dataset)
 
         assert len(dataset.data.columns) == 2

@@ -159,106 +159,123 @@ class SyncManager(object):
         self.client = client
         self.model_factory = model_factory
 
-    def filter_by_name(self, name):
+    def filter_by(self,**kwargs):
         """
-        Convenience method to create a filter expression to find objects by name
-        :param name: the object name
-        :return: the filter expression
+        Convert the keyword args into a filters expression to use with list operations.
+        :param kwargs: the keyword args
+        :return: the filters expression
         """
-        return '["name = %s"]' % (name,)
+        return '[%s]' % ",".join(['"%s = %s"' % (key, value) for (key, value) in kwargs.items()])
 
-    def find_datastore_by_name(self, datastore_name):
+    def find_datastore(self, datastore_name):
         """
         Find the datastore by name
         :param datastore_name: the datastore name
         :return: the datastore object or None if not found
         """
-        response = self.client.Datastore.listDatastores(filters=self.filter_by_name(datastore_name)).result()
+        response = self.client.Datastore.listDatastores(filters=self.filter_by(name=datastore_name)).result()
         return response.results[0] if response.total > 0 else None
 
-    def find_workflow_by_name(self, workflow_name):
+    def find_workflow(self, workflow_name, datastore):
         """
-        Find the workflow by name
+        Find the workflow by name and datastore
         :param workflow_name: the workflow name
+        :param datastore: the owning datastore
         :return: the workflow object or None if not found
         """
-        response = self.client.Workflow.listWorkflows(filters=self.filter_by_name(workflow_name)).result()
+        response = self.client.Workflow.listWorkflows(filters=self.filter_by(name=workflow_name,
+                                                                             datastore_id=datastore.id)).result()
         return response.results[0] if response.total > 0 else None
 
-    def find_action_by_name(self, action_name):
+    def find_action(self, action_name, workflow):
         """
-        Find the action by name
+        Find the action by name and workflow
         :param action_name: the action name
+        :param workflow: the owning workflow
         :return: the action object or None if not found
         """
-        response = self.client.Action.listActions(filters=self.filter_by_name(action_name)).result()
+        response = self.client.Action.listActions(filters=self.filter_by(name=action_name,
+                                                                         workflow_id=workflow.id)).result()
         return response.results[0] if response.total > 0 else None
 
-    def find_trigger_by_name(self, trigger_name):
+    def find_trigger(self, trigger_name, workflow):
         """
         Find the trigger by name
         :param trigger_name: the trigger name
+        :param workflow: the owning workflow
         :return: the trigger object or None if not found
         """
-        response = self.client.Trigger.listTriggers(filters=self.filter_by_name(trigger_name)).result()
+        response = self.client.Trigger.listTriggers(filters=self.filter_by(name=trigger_name,
+                                                                           workflow_ids=workflow.id)).result()
         return response.results[0] if response.total > 0 else None
 
-    def find_dataset_by_name(self, dataset_name):
+    def find_dataset(self, dataset_name):
         """
         Find the dataset by name
         :param dataset_name: the dataset name
         :return: the dataset object or None if not found
         """
-        response = self.client.Dataset.listDatasets(filters=self.filter_by_name(dataset_name)).result()
+        response = self.client.Dataset.listDatasets(filters=self.filter_by(name=dataset_name)).result()
         return response.results[0] if response.total > 0 else None
 
-    def delete_datastore_by_name(self, datastore_name):
+    def clean_datastore(self, datastore):
         """
-        Find the datastore by name and delete it if found.
-        :param datastore_name: the datastore name
-        :return: the datastore object or None if not found
+        Clean up the datastore, its workflows, etc.
+        :param datastore: the datastore object
         """
-        datastore = self.find_datastore_by_name(datastore_name)
         if datastore:
+            response = self.client.Workflow.listWorkflows(
+                filters=self.filter_by(datastore_id=datastore.id),
+                limit=1024).result()
+            if response.total > 0:
+                for workflow in response.results:
+                    self.clean_workflow(workflow)
+
             self.client.Datastore.deleteDatastore(datastore_id=datastore.id).result()
 
-    def delete_workflow_by_name(self, workflow_name):
+    def clean_workflow(self, workflow):
         """
-        Find the workflow by name and delete it if found.
-        :param workflow_name: the workflow name
-        :return:
+        Clean up the workflow, its actions and triggers, etc.
+        :param workflow: the workflow object
         """
-        workflow = self.find_workflow_by_name(workflow_name)
         if workflow:
+            response = self.client.Action.listActions(
+                filters=self.filter_by(workflow_id=workflow.id),
+                limit=1024).result()
+            if response.total > 0:
+                for action in response.results:
+                    self.clean_action(action)
+
+            response = self.client.Trigger.listTriggers(
+                filters=self.filter_by(workflow_ids=workflow.id),
+                limit=1024).result()
+            if response.total > 0:
+                for trigger in response.results:
+                    self.clean_trigger(trigger)
+
             self.client.Workflow.deleteWorkflow(workflow_id=workflow.id).result()
 
-    def delete_action_by_name(self, action_name):
+    def clean_action(self, action):
         """
-        Find the action by name and delete it if found.
-        :param action_name: the action name
-        :return:
+        Clean up the action
+        :param action: the action object
         """
-        action = self.find_action_by_name(action_name)
         if action:
             self.client.Action.deleteAction(action_id=action.id).result()
 
-    def delete_trigger_by_name(self, trigger_name):
+    def clean_trigger(self, trigger):
         """
-        Find the trigger by name and delete it if found.
-        :param trigger_name: the trigger name
-        :return:
+        Clean up the trigger
+        :param trigger: the trigger object
         """
-        trigger = self.find_trigger_by_name(trigger_name)
         if trigger:
             self.client.Trigger.deleteTrigger(trigger_id=trigger.id).result()
 
-    def delete_dataset_by_name(self, dataset_name):
+    def clean_dataset(self, dataset):
         """
-        Find the dataset by name and delete it if found.
-        :param dataset_name:
-        :return:
+        Clean up the dataset
+        :param dataset: the dataset object
         """
-        dataset = self.find_dataset_by_name(dataset_name)
         if dataset:
             self.client.Dataset.deleteDataset(dataset_id=dataset.id).result()
 
@@ -270,7 +287,7 @@ class SyncManager(object):
         :param callback: A function with a signature (datastore) => datastore
         :return: The created or updated datastore.
         """
-        datastore = self.find_datastore_by_name(datastore_name)
+        datastore = self.find_datastore(datastore_name)
         if datastore:
             datastore = callback(datastore)
             response = self.client.Datastore.updateDatastore(datastore_id=datastore.id, datastore=datastore).result()
@@ -289,7 +306,7 @@ class SyncManager(object):
         :param callback: A function with a signature (workflow) => workflow
         :return: The created or updated workflow.
         """
-        workflow = self.find_workflow_by_name(workflow_name)
+        workflow = self.find_workflow(workflow_name, datastore)
         if workflow:
             workflow = callback(workflow)
             response = self.client.Workflow.updateWorkflow(workflow_id=workflow.id, workflow=workflow).result()
@@ -309,7 +326,7 @@ class SyncManager(object):
         :param callback: A function with a signature (action) => action
         :return: The created or updated action.
         """
-        action = self.find_action_by_name(action_name)
+        action = self.find_action(action_name, workflow)
         if action:
             action = callback(action)
             response = self.client.Action.updateAction(action_id=action.id, action=action).result()
@@ -327,7 +344,7 @@ class SyncManager(object):
         :param callback: A function with a signature (trigger) => trigger
         :return: The created or updated trigger.
         """
-        trigger = self.find_trigger_by_name(trigger_name)
+        trigger = self.find_trigger(trigger_name, workflow)
         if trigger:
             trigger = callback(trigger)
             response = self.client.Trigger.updateTrigger(trigger_id=trigger.id, trigger=trigger).result()
@@ -347,7 +364,7 @@ class SyncManager(object):
         :param callback: A function with a signature (dataset) => dataset
         :return: The created or updated dataset
         """
-        dataset = self.find_dataset_by_name(dataset_name)
+        dataset = self.find_dataset(dataset_name)
         if dataset:
             dataset = callback(dataset)
             response = self.client.Dataset.updateDataset(dataset_id=dataset.id, dataset=dataset).result()
