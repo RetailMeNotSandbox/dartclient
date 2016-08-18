@@ -1,12 +1,27 @@
 import pytest
 
-from dartclient.core import create_sync_manager
+from bravado.client import SwaggerClient
+from dartclient.core import create_sync_manager, ModelFactory, SyncManager
 
 
-@pytest.mark.integrationtest
-def test_synchronization(dart_client, clean=False):
+def test_create_sync_manager_no_args():
+    sync_manager = create_sync_manager()
+    assert isinstance(sync_manager, SyncManager)
+    assert isinstance(sync_manager.client, SwaggerClient)
+    assert isinstance(sync_manager.model_factory, ModelFactory)
+
+
+def test_create_sync_manager_with_objs(client, model_factory):
+    sync_manager = create_sync_manager(client=client, model_factory=model_factory)
+    assert isinstance(sync_manager, SyncManager)
+    assert sync_manager.client == client
+    assert sync_manager.model_factory == model_factory
+
+
+@pytest.mark.integration_test
+def test_synchronization(integration_test_client, clean=False):
     # Build the Dart model
-    model = TestDartModel(client=dart_client)
+    model = TestDartModel(client=integration_test_client)
     try:
         # Make sure that Dart is clean
         model.clean()

@@ -159,7 +159,7 @@ class SyncManager(object):
         self.client = client
         self.model_factory = model_factory
 
-    def filter_by(self,**kwargs):
+    def filter_by(self, **kwargs):
         """
         Convert the keyword args into a filters expression to use with list operations.
         :param kwargs: the keyword args
