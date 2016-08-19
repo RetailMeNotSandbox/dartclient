@@ -1,5 +1,5 @@
 attrs==16.0.0
--e git+git@github.com:Yelp/bravado-core.git#egg=bravado_core
+bravado-core==4.3.2
 bravado==8.3.0
 cffi==1.7.0
 crochet==1.5.0
