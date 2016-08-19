@@ -293,7 +293,9 @@ class SyncManager(object):
             response = self.client.Datastore.updateDatastore(datastore_id=datastore.id, datastore=datastore).result()
             return response.results
         else:
-            datastore = callback(self.model_factory.create_datastore())
+            datastore = self.model_factory.create_datastore()
+            datastore.data.name = datastore_name
+            datastore = callback(datastore)
             response = self.client.Datastore.createDatastore(datastore=datastore).result()
             return response.results
 
@@ -312,7 +314,9 @@ class SyncManager(object):
             response = self.client.Workflow.updateWorkflow(workflow_id=workflow.id, workflow=workflow).result()
             return response.results
         else:
-            workflow = callback(self.model_factory.create_workflow())
+            workflow = self.model_factory.create_workflow()
+            workflow.data.name = workflow_name
+            workflow = callback(workflow)
             workflow.data.datastore_id = datastore.id
             response = self.client.Datastore.createDatastoreWorkflow(datastore_id=datastore.id, workflow=workflow).result()
             return response.results
@@ -332,7 +336,9 @@ class SyncManager(object):
             response = self.client.Action.updateAction(action_id=action.id, action=action).result()
             return response.results
         else:
-            action = callback(self.model_factory.create_action())
+            action = self.model_factory.create_action()
+            action.data.name = action_name
+            action = callback(action)
             response = self.client.Workflow.createWorkflowActions(workflow_id=workflow.id, actions=[action]).result()
             return response.results[0]
 
@@ -350,7 +356,9 @@ class SyncManager(object):
             response = self.client.Trigger.updateTrigger(trigger_id=trigger.id, trigger=trigger).result()
             return response.results
         else:
-            trigger = callback(self.model_factory.create_trigger())
+            trigger = self.model_factory.create_trigger()
+            trigger.data.name = trigger_name
+            trigger = callback(trigger)
             if workflow:
                 trigger.data.workflow_ids = [workflow.id]
             response = self.client.Trigger.createTrigger(trigger=trigger).result()
@@ -370,6 +378,8 @@ class SyncManager(object):
             response = self.client.Dataset.updateDataset(dataset_id=dataset.id, dataset=dataset).result()
             return response.results
         else:
-            dataset = callback(self.model_factory.create_dataset())
+            dataset = self.model_factory.create_dataset()
+            dataset.data.name = dataset_name
+            dataset = callback(dataset)
             response = self.client.Dataset.createDataset(dataset=dataset).result()
             return response.results

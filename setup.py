@@ -36,6 +36,6 @@ setup(
     zip_safe=False,
     install_requires=[
         'bravado>=8.3.0',
-        'bravado_core>=4.3.1'
+        'bravado_core>=4.3.2'
     ]
 )
