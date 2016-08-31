@@ -174,6 +174,8 @@ class SyncManager(object):
         :return: the datastore object or None if not found
         """
         response = self.client.Datastore.listDatastores(filters=self.filter_by(name=datastore_name)).result()
+        if response.total > 1:
+            raise Exception("More than one datastore object found.")
         return response.results[0] if response.total > 0 else None
 
     def find_workflow(self, workflow_name, datastore):
@@ -185,6 +187,8 @@ class SyncManager(object):
         """
         response = self.client.Workflow.listWorkflows(filters=self.filter_by(name=workflow_name,
                                                                              datastore_id=datastore.id)).result()
+        if response.total > 1:
+            raise Exception("More than one workflow object found.")
         return response.results[0] if response.total > 0 else None
 
     def find_action(self, action_name, workflow):
@@ -196,6 +200,8 @@ class SyncManager(object):
         """
         response = self.client.Action.listActions(filters=self.filter_by(name=action_name,
                                                                          workflow_id=workflow.id)).result()
+        if response.total > 1:
+            raise Exception("More than one action object found.")
         return response.results[0] if response.total > 0 else None
 
     def find_trigger(self, trigger_name, workflow):
@@ -207,6 +213,8 @@ class SyncManager(object):
         """
         response = self.client.Trigger.listTriggers(filters=self.filter_by(name=trigger_name,
                                                                            workflow_ids=workflow.id)).result()
+        if response.total > 1:
+            raise Exception("More than one trigger object found.")
         return response.results[0] if response.total > 0 else None
 
     def find_dataset(self, dataset_name):
@@ -216,6 +224,8 @@ class SyncManager(object):
         :return: the dataset object or None if not found
         """
         response = self.client.Dataset.listDatasets(filters=self.filter_by(name=dataset_name)).result()
+        if response.total > 1:
+            raise Exception("More than one dataset object found.")
         return response.results[0] if response.total > 0 else None
 
     def clean_datastore(self, datastore):
