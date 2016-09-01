@@ -167,13 +167,16 @@ class SyncManager(object):
         """
         return '[%s]' % ",".join(['"%s = %s"' % (key, value) for (key, value) in kwargs.items()])
 
-    def find_datastore(self, datastore_name):
+    def find_datastore(self, datastore_name, datastore_state):
         """
         Find the datastore by name
         :param datastore_name: the datastore name
+        :param datastore_state: The state of the datastore.
+                                The default state for emr_engine should be 'TEMPLATE', otherwise 'ACTIVE'
         :return: the datastore object or None if not found
         """
-        response = self.client.Datastore.listDatastores(filters=self.filter_by(name=datastore_name)).result()
+        response = self.client.Datastore.listDatastores(filters=self.filter_by(name=datastore_name,
+                                                                               state=datastore_state)).result()
         if response.total > 1:
             raise Exception("More than one datastore object found.")
         return response.results[0] if response.total > 0 else None
@@ -289,15 +292,17 @@ class SyncManager(object):
         if dataset:
             self.client.Dataset.deleteDataset(dataset_id=dataset.id).result()
 
-    def sync_datastore(self, datastore_name, callback):
+    def sync_datastore(self, datastore_name, datastore_state, callback):
         """
         Synchronize a datastore with Dart.
 
         :param datastore_name: The name of the datastore.
+        :param datastore_state: The state of the datastore.
+                                The default state for emr_engine should be 'TEMPLATE', otherwise 'ACTIVE'
         :param callback: A function with a signature (datastore) => datastore
         :return: The created or updated datastore.
         """
-        datastore = self.find_datastore(datastore_name)
+        datastore = self.find_datastore(datastore_name, datastore_state)
         if datastore:
             datastore = callback(datastore)
             response = self.client.Datastore.updateDatastore(datastore_id=datastore.id, datastore=datastore).result()
@@ -305,6 +310,7 @@ class SyncManager(object):
         else:
             datastore = self.model_factory.create_datastore()
             datastore.data.name = datastore_name
+            datastore.data.state = datastore_state
             datastore = callback(datastore)
             response = self.client.Datastore.createDatastore(datastore=datastore).result()
             return response.results

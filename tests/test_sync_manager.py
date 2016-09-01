@@ -54,6 +54,7 @@ class TestDartModel(object):
     }
 
     DATASTORE1_NAME = 'dartclient_test_datastore1'
+    DATASTORE1_STATE = 'TEMPLATE'
     WORKFLOW1_NAME = 'dartclient_test_workflow1'
     ACTION1_NAME = 'dartclient_test_action1'
     ACTION2_NAME = 'dartclient_test_action2'
@@ -67,11 +68,11 @@ class TestDartModel(object):
             model_defaults=self.DEFAULTS)
 
     def clean(self):
-        self.sync_manager.clean_datastore(self.sync_manager.find_datastore(self.DATASTORE1_NAME))
+        self.sync_manager.clean_datastore(self.sync_manager.find_datastore(self.DATASTORE1_NAME, self.DATASTORE1_STATE))
         self.sync_manager.clean_dataset(self.sync_manager.find_dataset(self.DATASET1_NAME))
 
     def synchronize(self):
-        ds = self.sync_manager.sync_datastore(self.DATASTORE1_NAME, self.define_datastore1)
+        ds = self.sync_manager.sync_datastore(self.DATASTORE1_NAME, self.DATASTORE1_STATE, self.define_datastore1)
         wf = self.sync_manager.sync_workflow(self.WORKFLOW1_NAME, ds, self.define_workflow1)
         self.sync_manager.sync_action(self.ACTION1_NAME, wf, self.define_action1)
         self.sync_manager.sync_action(self.ACTION2_NAME, wf, self.define_action2)
@@ -146,7 +147,7 @@ class TestDartModel(object):
         Assert that the entities do not exist in Dart.
         :return:
         """
-        assert self.sync_manager.find_datastore(self.DATASTORE1_NAME) is None
+        assert self.sync_manager.find_datastore(self.DATASTORE1_NAME, self.DATASTORE1_STATE) is None
         assert self.sync_manager.find_dataset(self.DATASET1_NAME) is None
 
     def validate(self):
@@ -162,7 +163,7 @@ class TestDartModel(object):
         self.validate_dataset1()
 
     def validate_datastore1(self):
-        datastore = self.sync_manager.find_datastore(self.DATASTORE1_NAME)
+        datastore = self.sync_manager.find_datastore(self.DATASTORE1_NAME, self.DATASTORE1_STATE)
         self.validate_object(datastore)
 
         assert datastore.data.args == {

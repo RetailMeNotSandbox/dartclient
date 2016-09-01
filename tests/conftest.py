@@ -26,7 +26,7 @@ def model_factory(client, model_defaults):
 
 @pytest.fixture(scope="session")
 def integration_test_api_url():
-    return 'http://%s/api/1' % (os.environ['DART_HOST'],)
+    return 'https://%s/api/1' % (os.environ['DART_HOST'],)
 
 
 @pytest.fixture(scope="session")
