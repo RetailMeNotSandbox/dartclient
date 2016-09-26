@@ -1,7 +1,9 @@
 import os
+
 import pytest
 
-from dartclient.core import create_client, ModelFactory
+from dartclient.core import create_client
+from dartclient.core import ModelFactory
 
 
 @pytest.fixture(scope="session")
@@ -25,10 +27,30 @@ def model_factory(client, model_defaults):
 
 
 @pytest.fixture(scope="session")
-def integration_test_api_url():
-    return 'https://%s/api/1' % (os.environ['DART_HOST'],)
+def integration_test_api_key():
+    return os.environ['DART_API_KEY']
 
 
 @pytest.fixture(scope="session")
-def integration_test_client(integration_test_api_url):
-    return create_client(api_url=integration_test_api_url)
+def integration_test_secret_key():
+    return os.environ['DART_SECRET_KEY']
+
+
+@pytest.fixture(scope="session")
+def integration_test_url():
+    return os.environ['DART_URL']
+
+
+@pytest.fixture(scope="session")
+def integration_test_api_url(integration_test_url):
+    return '%s/api/1' % (integration_test_url,)
+
+
+@pytest.fixture(scope="session")
+def integration_test_spec_url(integration_test_api_url):
+    return '%s/swagger.json' % (integration_test_api_url,)
+
+
+@pytest.fixture(scope="session")
+def integration_test_client(integration_test_spec_url):
+    return create_client(integration_test_spec_url)

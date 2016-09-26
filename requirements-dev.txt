@@ -33,3 +33,4 @@ zope.interface==4.2.0
 # Unit test dependencies
 pre-commit
 pytest
+mock

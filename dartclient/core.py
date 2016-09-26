@@ -21,12 +21,21 @@
 # SOFTWARE.
 
 from bravado.client import SwaggerClient
-
-import pkg_resources
-import yaml
+from bravado.requests_client import BasicAuthenticator
 
 
-def create_client(origin_url=None, config=None, api_url=None):
+def create_basic_authenticator(host, username, password):
+    """
+    Create a HTTP Basic authenticator object to use with create_client.
+    :param host:
+    :param username:
+    :param password:
+    :return:
+    """
+    return BasicAuthenticator(host=host, username=username, password=password)
+
+
+def create_client(origin_url=None, config=None, api_url=None, authenticator=None):
     """
     Create the Bravado swagger client from the specified origin url and config.
     For the moment, the Swagger specification for Dart is actually bundled
@@ -35,16 +44,15 @@ def create_client(origin_url=None, config=None, api_url=None):
 
     :param origin_url:
     :param config:
+    :param api_url
+    :param authenticator
     :return:
     """
-    # Load the swagger from the resource file
-    with pkg_resources.resource_stream('dartclient', 'swagger.yaml') as f:
-        spec_dict = yaml.load(f)
-    client = SwaggerClient.from_spec(spec_dict,
-                                     origin_url=origin_url,
-                                     config=config)
+    client = SwaggerClient.from_url(spec_url=origin_url, config=config)
     if api_url:
         client.swagger_spec.api_url = api_url
+    if authenticator:
+        client.swagger_spec.http_client.authenticator = authenticator
     return client
 
 
@@ -67,8 +75,10 @@ def create_sync_manager(client=None,
         a ModelFactory if one is not supplied
     :return:
     """
-    client = client or create_client(origin_url=origin_url, config=config, api_url=api_url)
-    model_factory = model_factory or ModelFactory(client, **(model_defaults or {}))
+    client = client or create_client(
+        origin_url=origin_url, config=config, api_url=api_url)
+    model_factory = model_factory or ModelFactory(
+        client, **(model_defaults or {}))
     return SyncManager(client, model_factory)
 
 
@@ -78,6 +88,7 @@ class ModelFactory(object):
     You can sub-class to set project level defaults for each of the various
     model types.
     """
+
     def __init__(self,
                  client,
                  on_failure_email=None,
@@ -226,7 +237,8 @@ class SyncManager(object):
         :param dataset_name: the dataset name
         :return: the dataset object or None if not found
         """
-        response = self.client.Dataset.listDatasets(filters=self.filter_by(name=dataset_name)).result()
+        response = self.client.Dataset.listDatasets(
+            filters=self.filter_by(name=dataset_name)).result()
         if response.total > 1:
             raise Exception("More than one dataset object found.")
         return response.results[0] if response.total > 0 else None
@@ -244,7 +256,8 @@ class SyncManager(object):
                 for workflow in response.results:
                     self.clean_workflow(workflow)
 
-            self.client.Datastore.deleteDatastore(datastore_id=datastore.id).result()
+            self.client.Datastore.deleteDatastore(
+                datastore_id=datastore.id).result()
 
     def clean_workflow(self, workflow):
         """
@@ -266,7 +279,8 @@ class SyncManager(object):
                 for trigger in response.results:
                     self.clean_trigger(trigger)
 
-            self.client.Workflow.deleteWorkflow(workflow_id=workflow.id).result()
+            self.client.Workflow.deleteWorkflow(
+                workflow_id=workflow.id).result()
 
     def clean_action(self, action):
         """
@@ -305,14 +319,16 @@ class SyncManager(object):
         datastore = self.find_datastore(datastore_name, datastore_state)
         if datastore:
             datastore = callback(datastore)
-            response = self.client.Datastore.updateDatastore(datastore_id=datastore.id, datastore=datastore).result()
+            response = self.client.Datastore.updateDatastore(
+                datastore_id=datastore.id, datastore=datastore).result()
             return response.results
         else:
             datastore = self.model_factory.create_datastore()
             datastore.data.name = datastore_name
             datastore.data.state = datastore_state
             datastore = callback(datastore)
-            response = self.client.Datastore.createDatastore(datastore=datastore).result()
+            response = self.client.Datastore.createDatastore(
+                datastore=datastore).result()
             return response.results
 
     def sync_workflow(self, workflow_name, datastore, callback):
@@ -327,14 +343,16 @@ class SyncManager(object):
         workflow = self.find_workflow(workflow_name, datastore)
         if workflow:
             workflow = callback(workflow)
-            response = self.client.Workflow.updateWorkflow(workflow_id=workflow.id, workflow=workflow).result()
+            response = self.client.Workflow.updateWorkflow(
+                workflow_id=workflow.id, workflow=workflow).result()
             return response.results
         else:
             workflow = self.model_factory.create_workflow()
             workflow.data.name = workflow_name
             workflow = callback(workflow)
             workflow.data.datastore_id = datastore.id
-            response = self.client.Datastore.createDatastoreWorkflow(datastore_id=datastore.id, workflow=workflow).result()
+            response = self.client.Datastore.createDatastoreWorkflow(
+                datastore_id=datastore.id, workflow=workflow).result()
             return response.results
 
     def sync_action(self, action_name, workflow, callback):
@@ -349,13 +367,15 @@ class SyncManager(object):
         action = self.find_action(action_name, workflow)
         if action:
             action = callback(action)
-            response = self.client.Action.updateAction(action_id=action.id, action=action).result()
+            response = self.client.Action.updateAction(
+                action_id=action.id, action=action).result()
             return response.results
         else:
             action = self.model_factory.create_action()
             action.data.name = action_name
             action = callback(action)
-            response = self.client.Workflow.createWorkflowActions(workflow_id=workflow.id, actions=[action]).result()
+            response = self.client.Workflow.createWorkflowActions(
+                workflow_id=workflow.id, actions=[action]).result()
             return response.results[0]
 
     def sync_trigger(self, trigger_name, workflow, callback):
@@ -369,7 +389,8 @@ class SyncManager(object):
         trigger = self.find_trigger(trigger_name, workflow)
         if trigger:
             trigger = callback(trigger)
-            response = self.client.Trigger.updateTrigger(trigger_id=trigger.id, trigger=trigger).result()
+            response = self.client.Trigger.updateTrigger(
+                trigger_id=trigger.id, trigger=trigger).result()
             return response.results
         else:
             trigger = self.model_factory.create_trigger()
@@ -377,7 +398,8 @@ class SyncManager(object):
             trigger = callback(trigger)
             if workflow:
                 trigger.data.workflow_ids = [workflow.id]
-            response = self.client.Trigger.createTrigger(trigger=trigger).result()
+            response = self.client.Trigger.createTrigger(
+                trigger=trigger).result()
             return response.results
 
     def sync_dataset(self, dataset_name, callback):
@@ -391,11 +413,13 @@ class SyncManager(object):
         dataset = self.find_dataset(dataset_name)
         if dataset:
             dataset = callback(dataset)
-            response = self.client.Dataset.updateDataset(dataset_id=dataset.id, dataset=dataset).result()
+            response = self.client.Dataset.updateDataset(
+                dataset_id=dataset.id, dataset=dataset).result()
             return response.results
         else:
             dataset = self.model_factory.create_dataset()
             dataset.data.name = dataset_name
             dataset = callback(dataset)
-            response = self.client.Dataset.createDataset(dataset=dataset).result()
+            response = self.client.Dataset.createDataset(
+                dataset=dataset).result()
             return response.results
