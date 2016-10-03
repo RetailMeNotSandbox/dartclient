@@ -43,15 +43,23 @@ def create_client(origin_url=None, config=None, api_url=None, authenticator=None
     with this client since Dart does not have an endpoint that exposes it
     dynamically.
 
-    :param origin_url:
-    :param config:
-    :param api_url
-    :param authenticator
-    :return:
+    :param origin_url: The location of the Swagger specification. If not
+        specified, then api_url must be specified will assume that swagger.json
+        is present at that location.
+    :param config: An optional configuration dictionary to pass to the Bravado
+        SwaggerClient.
+    :param api_url: The base URL for the API endpoints.
+    :param authenticator: An authenticator instance to use when making API
+        requests
+    :return: The Bravado SwaggerClient instance.
     """
-    if not origin_url:
-        raise RuntimeError("origin_url must be specified")
-    client = SwaggerClient.from_url(spec_url=origin_url, config=config)
+    if origin_url:
+        spec_url = origin_url
+    elif api_url:
+        spec_url = api_url + '/swagger.json'
+    else:
+        raise RuntimeError('One of origin_url or api_url must be specified')
+    client = SwaggerClient.from_url(spec_url=spec_url, config=config)
     if api_url:
         client.swagger_spec.api_url = api_url
     if authenticator:
