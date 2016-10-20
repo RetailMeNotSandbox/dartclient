@@ -18,7 +18,8 @@
 # AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
+#  SOFTWARE.
+
 
 from bravado.client import SwaggerClient
 from bravado.requests_client import BasicAuthenticator
@@ -91,11 +92,13 @@ class ModelFactory(object):
 
     def __init__(self,
                  client,
+                 engine_name=None,
                  on_failure_email=None,
                  on_started_email=None,
                  on_success_email=None,
                  tags=None):
         self.client = client
+        self.engine_name = engine_name
         self.on_failure_email = on_failure_email or []
         self.on_started_email = on_started_email or []
         self.on_success_email = on_success_email or []
@@ -355,7 +358,7 @@ class SyncManager(object):
                 datastore_id=datastore.id, workflow=workflow).result()
             return response.results
 
-    def sync_action(self, action_name, workflow, callback):
+    def sync_action(self, action_name, workflow, callback, dataset=None, subscription=None):
         """
         Synchronize an action with Dart.
 
@@ -367,6 +370,10 @@ class SyncManager(object):
         action = self.find_action(action_name, workflow)
         if action:
             action = callback(action)
+            if dataset:
+                action.args.dataset_id = dataset.id
+            if subscription:
+                action.args.subscription_id = subscription.id
             response = self.client.Action.updateAction(
                 action_id=action.id, action=action).result()
             return response.results
@@ -374,11 +381,15 @@ class SyncManager(object):
             action = self.model_factory.create_action()
             action.data.name = action_name
             action = callback(action)
+            if dataset:
+                action.args.dataset_id = dataset.id
+            if subscription:
+                action.args.subscription_id = subscription.id
             response = self.client.Workflow.createWorkflowActions(
                 workflow_id=workflow.id, actions=[action]).result()
             return response.results[0]
 
-    def sync_trigger(self, trigger_name, workflow, callback):
+    def sync_trigger(self, trigger_name, workflow, callback, subscription=None):
         """
         Synchronize a trigger with Dart.
 
@@ -389,6 +400,8 @@ class SyncManager(object):
         trigger = self.find_trigger(trigger_name, workflow)
         if trigger:
             trigger = callback(trigger)
+            if subscription:
+                trigger.args.subcription_id = subscription.id
             response = self.client.Trigger.updateTrigger(
                 trigger_id=trigger.id, trigger=trigger).result()
             return response.results
@@ -398,6 +411,8 @@ class SyncManager(object):
             trigger = callback(trigger)
             if workflow:
                 trigger.data.workflow_ids = [workflow.id]
+            if subscription:
+                trigger.args.subcription_id = subscription.id
             response = self.client.Trigger.createTrigger(
                 trigger=trigger).result()
             return response.results
