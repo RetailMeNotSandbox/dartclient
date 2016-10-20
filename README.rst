@@ -1,5 +1,5 @@
 .. image:: https://img.shields.io/travis/RetailMeNotSandbox/dartclient.svg
-  :target: https://travis-ci.org/RetailMeNotSandbox/dartclient.svg?branch=master
+  :target: https://travis-ci.org/RetailMeNotSandbox/dartclient?branch=master
 
 dartclient
 ==========
