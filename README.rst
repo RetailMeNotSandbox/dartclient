@@ -1,3 +1,6 @@
+.. image:: https://img.shields.io/travis/RetailMeNotSandbox/dartclient.svg
+  :target: https://travis-ci.org/RetailMeNotSandbox/dartclient.svg?branch=master
+
 dartclient
 ==========
 
@@ -8,8 +11,12 @@ to the Dart server.
 Installation
 ------------
 
-Dartclient has not yet been uploaded to pypi and depends on unreleases fixes
-to upstream libraries. For now, you will need to install it from source.
+Dartclient has not yet been uploaded to pypi. For now, you will need to
+install it from source:
+
+* pip install git+https://github.com/RetailMeNotSandbox/dartclient.git
+
+Or clone the repository for development:
 
 * git clone this repository
 * pip install -r requirements-dev.txt
