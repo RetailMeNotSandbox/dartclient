@@ -49,6 +49,8 @@ def create_client(origin_url=None, config=None, api_url=None, authenticator=None
     :param authenticator
     :return:
     """
+    if not origin_url:
+        raise RuntimeError("origin_url must be specified")
     client = SwaggerClient.from_url(spec_url=origin_url, config=config)
     if api_url:
         client.swagger_spec.api_url = api_url

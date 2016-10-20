@@ -7,8 +7,13 @@ from dartclient.core import ModelFactory
 
 
 @pytest.fixture(scope="session")
-def client():
-    return create_client()
+def github_origin_url():
+    return 'https://raw.githubusercontent.com/RetailMeNotSandbox/dart/master/src/python/dart/web/api/swagger.yaml'
+
+
+@pytest.fixture(scope="session")
+def client(github_origin_url):
+    return create_client(origin_url=github_origin_url)
 
 
 @pytest.fixture(scope="session")
