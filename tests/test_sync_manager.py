@@ -5,14 +5,20 @@ from dartclient.core import create_sync_manager, ModelFactory, SyncManager
 
 
 def test_create_sync_manager_no_args():
-    sync_manager = create_sync_manager()
+    with pytest.raises(RuntimeError):
+        create_sync_manager()
+
+
+def test_create_sync_manager_origin_url(github_origin_url):
+    sync_manager = create_sync_manager(origin_url=github_origin_url)
     assert isinstance(sync_manager, SyncManager)
     assert isinstance(sync_manager.client, SwaggerClient)
     assert isinstance(sync_manager.model_factory, ModelFactory)
 
 
 def test_create_sync_manager_with_objs(client, model_factory):
-    sync_manager = create_sync_manager(client=client, model_factory=model_factory)
+    sync_manager = create_sync_manager(
+        client=client, model_factory=model_factory)
     assert isinstance(sync_manager, SyncManager)
     assert sync_manager.client == client
     assert sync_manager.model_factory == model_factory
@@ -68,16 +74,24 @@ class TestDartModel(object):
             model_defaults=self.DEFAULTS)
 
     def clean(self):
-        self.sync_manager.clean_datastore(self.sync_manager.find_datastore(self.DATASTORE1_NAME, self.DATASTORE1_STATE))
-        self.sync_manager.clean_dataset(self.sync_manager.find_dataset(self.DATASET1_NAME))
+        self.sync_manager.clean_datastore(self.sync_manager.find_datastore(
+            self.DATASTORE1_NAME, self.DATASTORE1_STATE))
+        self.sync_manager.clean_dataset(
+            self.sync_manager.find_dataset(self.DATASET1_NAME))
 
     def synchronize(self):
-        ds = self.sync_manager.sync_datastore(self.DATASTORE1_NAME, self.DATASTORE1_STATE, self.define_datastore1)
-        wf = self.sync_manager.sync_workflow(self.WORKFLOW1_NAME, ds, self.define_workflow1)
-        self.sync_manager.sync_action(self.ACTION1_NAME, wf, self.define_action1)
-        self.sync_manager.sync_action(self.ACTION2_NAME, wf, self.define_action2)
-        self.sync_manager.sync_trigger(self.TRIGGER1_NAME, wf, self.define_trigger1)
-        self.sync_manager.sync_dataset(self.DATASET1_NAME, self.define_dataset1)
+        ds = self.sync_manager.sync_datastore(
+            self.DATASTORE1_NAME, self.DATASTORE1_STATE, self.define_datastore1)
+        wf = self.sync_manager.sync_workflow(
+            self.WORKFLOW1_NAME, ds, self.define_workflow1)
+        self.sync_manager.sync_action(
+            self.ACTION1_NAME, wf, self.define_action1)
+        self.sync_manager.sync_action(
+            self.ACTION2_NAME, wf, self.define_action2)
+        self.sync_manager.sync_trigger(
+            self.TRIGGER1_NAME, wf, self.define_trigger1)
+        self.sync_manager.sync_dataset(
+            self.DATASET1_NAME, self.define_dataset1)
 
     def define_datastore1(self, datastore):
         datastore.data.args = {
@@ -147,7 +161,8 @@ class TestDartModel(object):
         Assert that the entities do not exist in Dart.
         :return:
         """
-        assert self.sync_manager.find_datastore(self.DATASTORE1_NAME, self.DATASTORE1_STATE) is None
+        assert self.sync_manager.find_datastore(
+            self.DATASTORE1_NAME, self.DATASTORE1_STATE) is None
         assert self.sync_manager.find_dataset(self.DATASET1_NAME) is None
 
     def validate(self):
@@ -163,7 +178,8 @@ class TestDartModel(object):
         self.validate_dataset1()
 
     def validate_datastore1(self):
-        datastore = self.sync_manager.find_datastore(self.DATASTORE1_NAME, self.DATASTORE1_STATE)
+        datastore = self.sync_manager.find_datastore(
+            self.DATASTORE1_NAME, self.DATASTORE1_STATE)
         self.validate_object(datastore)
 
         assert datastore.data.args == {
@@ -179,7 +195,8 @@ class TestDartModel(object):
         return datastore
 
     def validate_workflow1(self, datastore):
-        workflow = self.sync_manager.find_workflow(self.WORKFLOW1_NAME, datastore)
+        workflow = self.sync_manager.find_workflow(
+            self.WORKFLOW1_NAME, datastore)
         self.validate_object(workflow)
 
         assert workflow.data.concurrency == 1
@@ -244,9 +261,12 @@ class TestDartModel(object):
         assert obj.updated is not None and isinstance(obj.updated, basestring)
         assert obj.version_id is not None and isinstance(obj.version_id, int)
         if hasattr(obj.data, 'on_failure_email'):
-            assert obj.data.on_failure_email == self.DEFAULTS['on_failure_email']
+            assert obj.data.on_failure_email == self.DEFAULTS[
+                'on_failure_email']
         if hasattr(obj.data, 'on_started_email'):
-            assert obj.data.on_started_email == self.DEFAULTS['on_started_email']
+            assert obj.data.on_started_email == self.DEFAULTS[
+                'on_started_email']
         if hasattr(obj.data, 'on_success_email'):
-            assert obj.data.on_success_email == self.DEFAULTS['on_success_email']
+            assert obj.data.on_success_email == self.DEFAULTS[
+                'on_success_email']
         assert obj.data.tags == self.DEFAULTS['tags']
