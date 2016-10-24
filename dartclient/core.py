@@ -28,6 +28,7 @@ from bravado.requests_client import BasicAuthenticator
 def create_basic_authenticator(host, username, password):
     """
     Create a HTTP Basic authenticator object to use with create_client.
+
     :param host:
     :param username:
     :param password:
@@ -75,12 +76,13 @@ def create_sync_manager(client=None,
                         model_defaults=None):
     """
     Convenient method to create a SyncManager instance.
+
     :param client: bravado.client.SwaggerClient instance
     :param origin_url: Origin URL for constructing a SwaggerClient from a
-        Swagger specification if one is not supplied
+        Swagger specification if one is not supplied.
     :param api_url: the Dart API URL
     :param config: Configuration dictionary for constructing a SwaggerClient
-         if one is not supplied
+        if one is not supplied
     :param model_factory: ModelFactory instance
     :param model_defaults: Dictionary of default values for construction
         a ModelFactory if one is not supplied
@@ -117,6 +119,7 @@ class ModelFactory(object):
     def create_datastore(self):
         """
         Create a datastore object and set the tags field to the default.
+
         :return: the datastore object
         """
         get_model = self.client.get_model
@@ -128,6 +131,7 @@ class ModelFactory(object):
         """
         Create a workflow object and set the on_failure_email, on_started_email,
         on_success_email, and tags fields to the defaults.
+
         :return: the workflow object
         """
         get_model = self.client.get_model
@@ -142,6 +146,7 @@ class ModelFactory(object):
         """
         Construct an action object and set the on_failure_email,
         on_success_email, and tags fields to the defaults.
+
         :return: the action object
         """
         get_model = self.client.get_model
@@ -154,6 +159,7 @@ class ModelFactory(object):
     def create_trigger(self):
         """
         Construct a trigger object and set the tags field to the default.
+
         :return: the trigger object
         """
         get_model = self.client.get_model
@@ -164,6 +170,7 @@ class ModelFactory(object):
     def create_dataset(self):
         """
         Construct a dataset object and set the tags field to the default.
+
         :return: the dataset object
         """
         get_model = self.client.get_model
@@ -186,6 +193,7 @@ class SyncManager(object):
     def filter_by(self, **kwargs):
         """
         Convert the keyword args into a filters expression to use with list operations.
+
         :param kwargs: the keyword args
         :return: the filters expression
         """
@@ -194,9 +202,10 @@ class SyncManager(object):
     def find_datastore(self, datastore_name, datastore_state):
         """
         Find the datastore by name
+
         :param datastore_name: the datastore name
-        :param datastore_state: The state of the datastore.
-                                The default state for emr_engine should be 'TEMPLATE', otherwise 'ACTIVE'
+        :param datastore_state: The state of the datastore. The default state
+            for emr_engine should be 'TEMPLATE', otherwise 'ACTIVE'.
         :return: the datastore object or None if not found
         """
         response = self.client.Datastore.listDatastores(filters=self.filter_by(name=datastore_name,
@@ -208,6 +217,7 @@ class SyncManager(object):
     def find_workflow(self, workflow_name, datastore):
         """
         Find the workflow by name and datastore
+
         :param workflow_name: the workflow name
         :param datastore: the owning datastore
         :return: the workflow object or None if not found
@@ -221,6 +231,7 @@ class SyncManager(object):
     def find_action(self, action_name, workflow):
         """
         Find the action by name and workflow
+
         :param action_name: the action name
         :param workflow: the owning workflow
         :return: the action object or None if not found
@@ -234,6 +245,7 @@ class SyncManager(object):
     def find_trigger(self, trigger_name, workflow):
         """
         Find the trigger by name
+
         :param trigger_name: the trigger name
         :param workflow: the owning workflow
         :return: the trigger object or None if not found
@@ -247,6 +259,7 @@ class SyncManager(object):
     def find_dataset(self, dataset_name):
         """
         Find the dataset by name
+
         :param dataset_name: the dataset name
         :return: the dataset object or None if not found
         """
@@ -259,6 +272,7 @@ class SyncManager(object):
     def clean_datastore(self, datastore):
         """
         Clean up the datastore, its workflows, etc.
+
         :param datastore: the datastore object
         """
         if datastore:
@@ -275,6 +289,7 @@ class SyncManager(object):
     def clean_workflow(self, workflow):
         """
         Clean up the workflow, its actions and triggers, etc.
+
         :param workflow: the workflow object
         """
         if workflow:
@@ -298,6 +313,7 @@ class SyncManager(object):
     def clean_action(self, action):
         """
         Clean up the action
+
         :param action: the action object
         """
         if action:
@@ -306,6 +322,7 @@ class SyncManager(object):
     def clean_trigger(self, trigger):
         """
         Clean up the trigger
+
         :param trigger: the trigger object
         """
         if trigger:
@@ -314,6 +331,7 @@ class SyncManager(object):
     def clean_dataset(self, dataset):
         """
         Clean up the dataset
+
         :param dataset: the dataset object
         """
         if dataset:
