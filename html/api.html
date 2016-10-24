@@ -1,0 +1,573 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>API Reference &#8212; dartclient 1.1.dev1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.1.dev1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="top" title="dartclient 1.1.dev1 documentation" href="index.html" />
+    <link rel="prev" title="Quickstart" href="quickstart.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="api-reference">
+<span id="api"></span><h1>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-dartclient.core">
+<span id="dartclient-core"></span><h2>dartclient.core<a class="headerlink" href="#module-dartclient.core" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="dartclient.core.ModelFactory">
+<em class="property">class </em><code class="descclassname">dartclient.core.</code><code class="descname">ModelFactory</code><span class="sig-paren">(</span><em>client</em>, <em>engine_name=None</em>, <em>on_failure_email=None</em>, <em>on_started_email=None</em>, <em>on_success_email=None</em>, <em>tags=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dartclient/core.html#ModelFactory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dartclient.core.ModelFactory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provides factory methods for model objects that are used by SyncManager.
+You can sub-class to set project level defaults for each of the various
+model types.</p>
+<dl class="method">
+<dt id="dartclient.core.ModelFactory.create_action">
+<code class="descname">create_action</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dartclient/core.html#ModelFactory.create_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dartclient.core.ModelFactory.create_action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct an action object and set the on_failure_email,
+on_success_email, and tags fields to the defaults.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the action object</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="dartclient.core.ModelFactory.create_dataset">
+<code class="descname">create_dataset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dartclient/core.html#ModelFactory.create_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dartclient.core.ModelFactory.create_dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct a dataset object and set the tags field to the default.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the dataset object</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="dartclient.core.ModelFactory.create_datastore">
+<code class="descname">create_datastore</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dartclient/core.html#ModelFactory.create_datastore"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dartclient.core.ModelFactory.create_datastore" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a datastore object and set the tags field to the default.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the datastore object</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="dartclient.core.ModelFactory.create_trigger">
+<code class="descname">create_trigger</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dartclient/core.html#ModelFactory.create_trigger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dartclient.core.ModelFactory.create_trigger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct a trigger object and set the tags field to the default.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the trigger object</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="dartclient.core.ModelFactory.create_workflow">
+<code class="descname">create_workflow</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dartclient/core.html#ModelFactory.create_workflow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dartclient.core.ModelFactory.create_workflow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a workflow object and set the on_failure_email, on_started_email,
+on_success_email, and tags fields to the defaults.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the workflow object</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="dartclient.core.SyncManager">
+<em class="property">class </em><code class="descclassname">dartclient.core.</code><code class="descname">SyncManager</code><span class="sig-paren">(</span><em>client</em>, <em>model_factory</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dartclient/core.html#SyncManager"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dartclient.core.SyncManager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provides convenient methods for synchronizing descriptions of a Dart
+model with a Dart server.</p>
+<dl class="method">
+<dt id="dartclient.core.SyncManager.clean_action">
+<code class="descname">clean_action</code><span class="sig-paren">(</span><em>action</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dartclient/core.html#SyncManager.clean_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dartclient.core.SyncManager.clean_action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clean up the action</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>action</strong> &#8211; the action object</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="dartclient.core.SyncManager.clean_dataset">
+<code class="descname">clean_dataset</code><span class="sig-paren">(</span><em>dataset</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dartclient/core.html#SyncManager.clean_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dartclient.core.SyncManager.clean_dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clean up the dataset</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dataset</strong> &#8211; the dataset object</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="dartclient.core.SyncManager.clean_datastore">
+<code class="descname">clean_datastore</code><span class="sig-paren">(</span><em>datastore</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dartclient/core.html#SyncManager.clean_datastore"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dartclient.core.SyncManager.clean_datastore" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clean up the datastore, its workflows, etc.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>datastore</strong> &#8211; the datastore object</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="dartclient.core.SyncManager.clean_trigger">
+<code class="descname">clean_trigger</code><span class="sig-paren">(</span><em>trigger</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dartclient/core.html#SyncManager.clean_trigger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dartclient.core.SyncManager.clean_trigger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clean up the trigger</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>trigger</strong> &#8211; the trigger object</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="dartclient.core.SyncManager.clean_workflow">
+<code class="descname">clean_workflow</code><span class="sig-paren">(</span><em>workflow</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dartclient/core.html#SyncManager.clean_workflow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dartclient.core.SyncManager.clean_workflow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clean up the workflow, its actions and triggers, etc.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>workflow</strong> &#8211; the workflow object</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="dartclient.core.SyncManager.filter_by">
+<code class="descname">filter_by</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dartclient/core.html#SyncManager.filter_by"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dartclient.core.SyncManager.filter_by" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert the keyword args into a filters expression to use with list operations.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>kwargs</strong> &#8211; the keyword args</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the filters expression</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="dartclient.core.SyncManager.find_action">
+<code class="descname">find_action</code><span class="sig-paren">(</span><em>action_name</em>, <em>workflow</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dartclient/core.html#SyncManager.find_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dartclient.core.SyncManager.find_action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the action by name and workflow</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>action_name</strong> &#8211; the action name</li>
+<li><strong>workflow</strong> &#8211; the owning workflow</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the action object or None if not found</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="dartclient.core.SyncManager.find_dataset">
+<code class="descname">find_dataset</code><span class="sig-paren">(</span><em>dataset_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dartclient/core.html#SyncManager.find_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dartclient.core.SyncManager.find_dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the dataset by name</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dataset_name</strong> &#8211; the dataset name</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the dataset object or None if not found</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="dartclient.core.SyncManager.find_datastore">
+<code class="descname">find_datastore</code><span class="sig-paren">(</span><em>datastore_name</em>, <em>datastore_state</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dartclient/core.html#SyncManager.find_datastore"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dartclient.core.SyncManager.find_datastore" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the datastore by name</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>datastore_name</strong> &#8211; the datastore name</li>
+<li><strong>datastore_state</strong> &#8211; The state of the datastore. The default state
+for emr_engine should be &#8216;TEMPLATE&#8217;, otherwise &#8216;ACTIVE&#8217;.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the datastore object or None if not found</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="dartclient.core.SyncManager.find_trigger">
+<code class="descname">find_trigger</code><span class="sig-paren">(</span><em>trigger_name</em>, <em>workflow</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dartclient/core.html#SyncManager.find_trigger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dartclient.core.SyncManager.find_trigger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the trigger by name</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>trigger_name</strong> &#8211; the trigger name</li>
+<li><strong>workflow</strong> &#8211; the owning workflow</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the trigger object or None if not found</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="dartclient.core.SyncManager.find_workflow">
+<code class="descname">find_workflow</code><span class="sig-paren">(</span><em>workflow_name</em>, <em>datastore</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dartclient/core.html#SyncManager.find_workflow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dartclient.core.SyncManager.find_workflow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the workflow by name and datastore</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>workflow_name</strong> &#8211; the workflow name</li>
+<li><strong>datastore</strong> &#8211; the owning datastore</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the workflow object or None if not found</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="dartclient.core.SyncManager.sync_action">
+<code class="descname">sync_action</code><span class="sig-paren">(</span><em>action_name</em>, <em>workflow</em>, <em>callback</em>, <em>dataset=None</em>, <em>subscription=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dartclient/core.html#SyncManager.sync_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dartclient.core.SyncManager.sync_action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Synchronize an action with Dart.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>action_name</strong> &#8211; The name of the action.</li>
+<li><strong>workflow</strong> &#8211; The workflow containing the action.</li>
+<li><strong>callback</strong> &#8211; A function with a signature (action) =&gt; action</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The created or updated action.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="dartclient.core.SyncManager.sync_dataset">
+<code class="descname">sync_dataset</code><span class="sig-paren">(</span><em>dataset_name</em>, <em>callback</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dartclient/core.html#SyncManager.sync_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dartclient.core.SyncManager.sync_dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Synchronize a dataset with Dataset.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dataset_name</strong> &#8211; The name of the dataset</li>
+<li><strong>callback</strong> &#8211; A function with a signature (dataset) =&gt; dataset</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The created or updated dataset</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="dartclient.core.SyncManager.sync_datastore">
+<code class="descname">sync_datastore</code><span class="sig-paren">(</span><em>datastore_name</em>, <em>datastore_state</em>, <em>callback</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dartclient/core.html#SyncManager.sync_datastore"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dartclient.core.SyncManager.sync_datastore" title="Permalink to this definition">¶</a></dt>
+<dd><p>Synchronize a datastore with Dart.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>datastore_name</strong> &#8211; The name of the datastore.</li>
+<li><strong>datastore_state</strong> &#8211; The state of the datastore.
+The default state for emr_engine should be &#8216;TEMPLATE&#8217;, otherwise &#8216;ACTIVE&#8217;</li>
+<li><strong>callback</strong> &#8211; A function with a signature (datastore) =&gt; datastore</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The created or updated datastore.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="dartclient.core.SyncManager.sync_trigger">
+<code class="descname">sync_trigger</code><span class="sig-paren">(</span><em>trigger_name</em>, <em>workflow</em>, <em>callback</em>, <em>subscription=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dartclient/core.html#SyncManager.sync_trigger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dartclient.core.SyncManager.sync_trigger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Synchronize a trigger with Dart.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>trigger_name</strong> &#8211; The name of the trigger</li>
+<li><strong>callback</strong> &#8211; A function with a signature (trigger) =&gt; trigger</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The created or updated trigger.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="dartclient.core.SyncManager.sync_workflow">
+<code class="descname">sync_workflow</code><span class="sig-paren">(</span><em>workflow_name</em>, <em>datastore</em>, <em>callback</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dartclient/core.html#SyncManager.sync_workflow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dartclient.core.SyncManager.sync_workflow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Synchronize a workflow with Dart.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>workflow_name</strong> &#8211; The name of the workflow.</li>
+<li><strong>datastore</strong> &#8211; The datastore containing the workflow.</li>
+<li><strong>callback</strong> &#8211; A function with a signature (workflow) =&gt; workflow</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The created or updated workflow.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="dartclient.core.create_basic_authenticator">
+<code class="descclassname">dartclient.core.</code><code class="descname">create_basic_authenticator</code><span class="sig-paren">(</span><em>host</em>, <em>username</em>, <em>password</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dartclient/core.html#create_basic_authenticator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dartclient.core.create_basic_authenticator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a HTTP Basic authenticator object to use with create_client.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>host</strong> &#8211; </li>
+<li><strong>username</strong> &#8211; </li>
+<li><strong>password</strong> &#8211; </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="dartclient.core.create_client">
+<code class="descclassname">dartclient.core.</code><code class="descname">create_client</code><span class="sig-paren">(</span><em>origin_url=None</em>, <em>config=None</em>, <em>api_url=None</em>, <em>authenticator=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dartclient/core.html#create_client"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dartclient.core.create_client" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the Bravado swagger client from the specified origin url and config.
+For the moment, the Swagger specification for Dart is actually bundled
+with this client since Dart does not have an endpoint that exposes it
+dynamically.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>origin_url</strong> &#8211; The location of the Swagger specification. If not
+specified, then api_url must be specified will assume that swagger.json
+is present at that location.</li>
+<li><strong>config</strong> &#8211; An optional configuration dictionary to pass to the Bravado
+SwaggerClient.</li>
+<li><strong>api_url</strong> &#8211; The base URL for the API endpoints.</li>
+<li><strong>authenticator</strong> &#8211; An authenticator instance to use when making API
+requests</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The Bravado SwaggerClient instance.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="dartclient.core.create_sync_manager">
+<code class="descclassname">dartclient.core.</code><code class="descname">create_sync_manager</code><span class="sig-paren">(</span><em>client=None</em>, <em>origin_url=None</em>, <em>api_url=None</em>, <em>config=None</em>, <em>model_factory=None</em>, <em>model_defaults=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dartclient/core.html#create_sync_manager"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dartclient.core.create_sync_manager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convenient method to create a SyncManager instance.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>client</strong> &#8211; bravado.client.SwaggerClient instance</li>
+<li><strong>origin_url</strong> &#8211; Origin URL for constructing a SwaggerClient from a
+Swagger specification if one is not supplied.</li>
+<li><strong>api_url</strong> &#8211; the Dart API URL</li>
+<li><strong>config</strong> &#8211; Configuration dictionary for constructing a SwaggerClient
+if one is not supplied</li>
+<li><strong>model_factory</strong> &#8211; ModelFactory instance</li>
+<li><strong>model_defaults</strong> &#8211; Dictionary of default values for construction
+a ModelFactory if one is not supplied</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">API Reference</a><ul>
+<li><a class="reference internal" href="#module-dartclient.core">dartclient.core</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="quickstart.html" title="previous chapter">Quickstart</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/api.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, RetailMeNot, Inc..
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+      |
+      <a href="_sources/api.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

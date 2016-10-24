@@ -1,0 +1,556 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>dartclient.core &#8212; dartclient 1.1.dev1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.1.dev1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="top" title="dartclient 1.1.dev1 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for dartclient.core</h1><div class="highlight"><pre>
+<span></span><span class="c1"># The MIT License (MIT)</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2016 RetailMeNot, Inc.</span>
+<span class="c1">#</span>
+<span class="c1"># Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class="c1"># of this software and associated documentation files (the &quot;Software&quot;), to deal</span>
+<span class="c1"># in the Software without restriction, including without limitation the rights</span>
+<span class="c1"># to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class="c1"># copies of the Software, and to permit persons to whom the Software is</span>
+<span class="c1"># furnished to do so, subject to the following conditions:</span>
+<span class="c1">#</span>
+<span class="c1"># The above copyright notice and this permission notice shall be included in all</span>
+<span class="c1"># copies or substantial portions of the Software.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="c1"># IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="c1"># FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
+<span class="c1"># AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
+<span class="c1"># LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
+<span class="c1"># OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
+<span class="c1">#  SOFTWARE.</span>
+
+
+<span class="kn">from</span> <span class="nn">bravado.client</span> <span class="k">import</span> <span class="n">SwaggerClient</span>
+<span class="kn">from</span> <span class="nn">bravado.requests_client</span> <span class="k">import</span> <span class="n">BasicAuthenticator</span>
+
+
+<div class="viewcode-block" id="create_basic_authenticator"><a class="viewcode-back" href="../../api.html#dartclient.core.create_basic_authenticator">[docs]</a><span class="k">def</span> <span class="nf">create_basic_authenticator</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a HTTP Basic authenticator object to use with create_client.</span>
+
+<span class="sd">    :param host:</span>
+<span class="sd">    :param username:</span>
+<span class="sd">    :param password:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">BasicAuthenticator</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="create_client"><a class="viewcode-back" href="../../api.html#dartclient.core.create_client">[docs]</a><span class="k">def</span> <span class="nf">create_client</span><span class="p">(</span><span class="n">origin_url</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">api_url</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">authenticator</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create the Bravado swagger client from the specified origin url and config.</span>
+<span class="sd">    For the moment, the Swagger specification for Dart is actually bundled</span>
+<span class="sd">    with this client since Dart does not have an endpoint that exposes it</span>
+<span class="sd">    dynamically.</span>
+
+<span class="sd">    :param origin_url: The location of the Swagger specification. If not</span>
+<span class="sd">        specified, then api_url must be specified will assume that swagger.json</span>
+<span class="sd">        is present at that location.</span>
+<span class="sd">    :param config: An optional configuration dictionary to pass to the Bravado</span>
+<span class="sd">        SwaggerClient.</span>
+<span class="sd">    :param api_url: The base URL for the API endpoints.</span>
+<span class="sd">    :param authenticator: An authenticator instance to use when making API</span>
+<span class="sd">        requests</span>
+<span class="sd">    :return: The Bravado SwaggerClient instance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">origin_url</span><span class="p">:</span>
+        <span class="n">spec_url</span> <span class="o">=</span> <span class="n">origin_url</span>
+    <span class="k">elif</span> <span class="n">api_url</span><span class="p">:</span>
+        <span class="n">spec_url</span> <span class="o">=</span> <span class="n">api_url</span> <span class="o">+</span> <span class="s1">&#39;/swagger.json&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;One of origin_url or api_url must be specified&#39;</span><span class="p">)</span>
+    <span class="n">client</span> <span class="o">=</span> <span class="n">SwaggerClient</span><span class="o">.</span><span class="n">from_url</span><span class="p">(</span><span class="n">spec_url</span><span class="o">=</span><span class="n">spec_url</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">api_url</span><span class="p">:</span>
+        <span class="n">client</span><span class="o">.</span><span class="n">swagger_spec</span><span class="o">.</span><span class="n">api_url</span> <span class="o">=</span> <span class="n">api_url</span>
+    <span class="k">if</span> <span class="n">authenticator</span><span class="p">:</span>
+        <span class="n">client</span><span class="o">.</span><span class="n">swagger_spec</span><span class="o">.</span><span class="n">http_client</span><span class="o">.</span><span class="n">authenticator</span> <span class="o">=</span> <span class="n">authenticator</span>
+    <span class="k">return</span> <span class="n">client</span></div>
+
+
+<div class="viewcode-block" id="create_sync_manager"><a class="viewcode-back" href="../../api.html#dartclient.core.create_sync_manager">[docs]</a><span class="k">def</span> <span class="nf">create_sync_manager</span><span class="p">(</span><span class="n">client</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                        <span class="n">origin_url</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                        <span class="n">api_url</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                        <span class="n">config</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                        <span class="n">model_factory</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                        <span class="n">model_defaults</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convenient method to create a SyncManager instance.</span>
+
+<span class="sd">    :param client: bravado.client.SwaggerClient instance</span>
+<span class="sd">    :param origin_url: Origin URL for constructing a SwaggerClient from a</span>
+<span class="sd">        Swagger specification if one is not supplied.</span>
+<span class="sd">    :param api_url: the Dart API URL</span>
+<span class="sd">    :param config: Configuration dictionary for constructing a SwaggerClient</span>
+<span class="sd">        if one is not supplied</span>
+<span class="sd">    :param model_factory: ModelFactory instance</span>
+<span class="sd">    :param model_defaults: Dictionary of default values for construction</span>
+<span class="sd">        a ModelFactory if one is not supplied</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">client</span> <span class="o">=</span> <span class="n">client</span> <span class="ow">or</span> <span class="n">create_client</span><span class="p">(</span>
+        <span class="n">origin_url</span><span class="o">=</span><span class="n">origin_url</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">,</span> <span class="n">api_url</span><span class="o">=</span><span class="n">api_url</span><span class="p">)</span>
+    <span class="n">model_factory</span> <span class="o">=</span> <span class="n">model_factory</span> <span class="ow">or</span> <span class="n">ModelFactory</span><span class="p">(</span>
+        <span class="n">client</span><span class="p">,</span> <span class="o">**</span><span class="p">(</span><span class="n">model_defaults</span> <span class="ow">or</span> <span class="p">{}))</span>
+    <span class="k">return</span> <span class="n">SyncManager</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">model_factory</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ModelFactory"><a class="viewcode-back" href="../../api.html#dartclient.core.ModelFactory">[docs]</a><span class="k">class</span> <span class="nc">ModelFactory</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Provides factory methods for model objects that are used by SyncManager.</span>
+<span class="sd">    You can sub-class to set project level defaults for each of the various</span>
+<span class="sd">    model types.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">client</span><span class="p">,</span>
+                 <span class="n">engine_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">on_failure_email</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">on_started_email</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">on_success_email</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">tags</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">client</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">engine_name</span> <span class="o">=</span> <span class="n">engine_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">on_failure_email</span> <span class="o">=</span> <span class="n">on_failure_email</span> <span class="ow">or</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">on_started_email</span> <span class="o">=</span> <span class="n">on_started_email</span> <span class="ow">or</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">on_success_email</span> <span class="o">=</span> <span class="n">on_success_email</span> <span class="ow">or</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tags</span> <span class="o">=</span> <span class="n">tags</span> <span class="ow">or</span> <span class="p">[]</span>
+
+<div class="viewcode-block" id="ModelFactory.create_datastore"><a class="viewcode-back" href="../../api.html#dartclient.core.ModelFactory.create_datastore">[docs]</a>    <span class="k">def</span> <span class="nf">create_datastore</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a datastore object and set the tags field to the default.</span>
+
+<span class="sd">        :return: the datastore object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">get_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">get_model</span>
+        <span class="n">datastore</span> <span class="o">=</span> <span class="n">get_model</span><span class="p">(</span><span class="s1">&#39;Datastore&#39;</span><span class="p">)(</span><span class="n">data</span><span class="o">=</span><span class="n">get_model</span><span class="p">(</span><span class="s1">&#39;DatastoreData&#39;</span><span class="p">)())</span>
+        <span class="n">datastore</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">tags</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags</span>
+        <span class="k">return</span> <span class="n">datastore</span></div>
+
+<div class="viewcode-block" id="ModelFactory.create_workflow"><a class="viewcode-back" href="../../api.html#dartclient.core.ModelFactory.create_workflow">[docs]</a>    <span class="k">def</span> <span class="nf">create_workflow</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a workflow object and set the on_failure_email, on_started_email,</span>
+<span class="sd">        on_success_email, and tags fields to the defaults.</span>
+
+<span class="sd">        :return: the workflow object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">get_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">get_model</span>
+        <span class="n">workflow</span> <span class="o">=</span> <span class="n">get_model</span><span class="p">(</span><span class="s1">&#39;Workflow&#39;</span><span class="p">)(</span><span class="n">data</span><span class="o">=</span><span class="n">get_model</span><span class="p">(</span><span class="s1">&#39;WorkflowData&#39;</span><span class="p">)())</span>
+        <span class="n">workflow</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">on_failure_email</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_failure_email</span>
+        <span class="n">workflow</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">on_started_email</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_started_email</span>
+        <span class="n">workflow</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">on_success_email</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_success_email</span>
+        <span class="n">workflow</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">tags</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags</span>
+        <span class="k">return</span> <span class="n">workflow</span></div>
+
+<div class="viewcode-block" id="ModelFactory.create_action"><a class="viewcode-back" href="../../api.html#dartclient.core.ModelFactory.create_action">[docs]</a>    <span class="k">def</span> <span class="nf">create_action</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Construct an action object and set the on_failure_email,</span>
+<span class="sd">        on_success_email, and tags fields to the defaults.</span>
+
+<span class="sd">        :return: the action object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">get_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">get_model</span>
+        <span class="n">action</span> <span class="o">=</span> <span class="n">get_model</span><span class="p">(</span><span class="s1">&#39;Action&#39;</span><span class="p">)(</span><span class="n">data</span><span class="o">=</span><span class="n">get_model</span><span class="p">(</span><span class="s1">&#39;ActionData&#39;</span><span class="p">)())</span>
+        <span class="n">action</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">on_failure_email</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_failure_email</span>
+        <span class="n">action</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">on_success_email</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_success_email</span>
+        <span class="n">action</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">tags</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags</span>
+        <span class="k">return</span> <span class="n">action</span></div>
+
+<div class="viewcode-block" id="ModelFactory.create_trigger"><a class="viewcode-back" href="../../api.html#dartclient.core.ModelFactory.create_trigger">[docs]</a>    <span class="k">def</span> <span class="nf">create_trigger</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Construct a trigger object and set the tags field to the default.</span>
+
+<span class="sd">        :return: the trigger object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">get_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">get_model</span>
+        <span class="n">trigger</span> <span class="o">=</span> <span class="n">get_model</span><span class="p">(</span><span class="s1">&#39;Trigger&#39;</span><span class="p">)(</span><span class="n">data</span><span class="o">=</span><span class="n">get_model</span><span class="p">(</span><span class="s1">&#39;TriggerData&#39;</span><span class="p">)())</span>
+        <span class="n">trigger</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">tags</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags</span>
+        <span class="k">return</span> <span class="n">trigger</span></div>
+
+<div class="viewcode-block" id="ModelFactory.create_dataset"><a class="viewcode-back" href="../../api.html#dartclient.core.ModelFactory.create_dataset">[docs]</a>    <span class="k">def</span> <span class="nf">create_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Construct a dataset object and set the tags field to the default.</span>
+
+<span class="sd">        :return: the dataset object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">get_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">get_model</span>
+        <span class="n">dataset</span> <span class="o">=</span> <span class="n">get_model</span><span class="p">(</span><span class="s1">&#39;Dataset&#39;</span><span class="p">)(</span><span class="n">data</span><span class="o">=</span><span class="n">get_model</span><span class="p">(</span><span class="s1">&#39;DatasetData&#39;</span><span class="p">)())</span>
+        <span class="n">dataset</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">data_format</span> <span class="o">=</span> <span class="n">get_model</span><span class="p">(</span><span class="s1">&#39;DataFormat&#39;</span><span class="p">)()</span>
+        <span class="n">dataset</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">tags</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags</span>
+        <span class="k">return</span> <span class="n">dataset</span></div></div>
+
+
+<div class="viewcode-block" id="SyncManager"><a class="viewcode-back" href="../../api.html#dartclient.core.SyncManager">[docs]</a><span class="k">class</span> <span class="nc">SyncManager</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Provides convenient methods for synchronizing descriptions of a Dart</span>
+<span class="sd">    model with a Dart server.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">,</span> <span class="n">model_factory</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">client</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_factory</span> <span class="o">=</span> <span class="n">model_factory</span>
+
+<div class="viewcode-block" id="SyncManager.filter_by"><a class="viewcode-back" href="../../api.html#dartclient.core.SyncManager.filter_by">[docs]</a>    <span class="k">def</span> <span class="nf">filter_by</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert the keyword args into a filters expression to use with list operations.</span>
+
+<span class="sd">        :param kwargs: the keyword args</span>
+<span class="sd">        :return: the filters expression</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s1">&#39;[</span><span class="si">%s</span><span class="s1">]&#39;</span> <span class="o">%</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;&quot;</span><span class="si">%s</span><span class="s1"> = </span><span class="si">%s</span><span class="s1">&quot;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span></div>
+
+<div class="viewcode-block" id="SyncManager.find_datastore"><a class="viewcode-back" href="../../api.html#dartclient.core.SyncManager.find_datastore">[docs]</a>    <span class="k">def</span> <span class="nf">find_datastore</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datastore_name</span><span class="p">,</span> <span class="n">datastore_state</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Find the datastore by name</span>
+
+<span class="sd">        :param datastore_name: the datastore name</span>
+<span class="sd">        :param datastore_state: The state of the datastore. The default state</span>
+<span class="sd">            for emr_engine should be &#39;TEMPLATE&#39;, otherwise &#39;ACTIVE&#39;.</span>
+<span class="sd">        :return: the datastore object or None if not found</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">Datastore</span><span class="o">.</span><span class="n">listDatastores</span><span class="p">(</span><span class="n">filters</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">datastore_name</span><span class="p">,</span>
+                                                                               <span class="n">state</span><span class="o">=</span><span class="n">datastore_state</span><span class="p">))</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">total</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;More than one datastore object found.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">total</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="SyncManager.find_workflow"><a class="viewcode-back" href="../../api.html#dartclient.core.SyncManager.find_workflow">[docs]</a>    <span class="k">def</span> <span class="nf">find_workflow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow_name</span><span class="p">,</span> <span class="n">datastore</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Find the workflow by name and datastore</span>
+
+<span class="sd">        :param workflow_name: the workflow name</span>
+<span class="sd">        :param datastore: the owning datastore</span>
+<span class="sd">        :return: the workflow object or None if not found</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">Workflow</span><span class="o">.</span><span class="n">listWorkflows</span><span class="p">(</span><span class="n">filters</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">workflow_name</span><span class="p">,</span>
+                                                                             <span class="n">datastore_id</span><span class="o">=</span><span class="n">datastore</span><span class="o">.</span><span class="n">id</span><span class="p">))</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">total</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;More than one workflow object found.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">total</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="SyncManager.find_action"><a class="viewcode-back" href="../../api.html#dartclient.core.SyncManager.find_action">[docs]</a>    <span class="k">def</span> <span class="nf">find_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action_name</span><span class="p">,</span> <span class="n">workflow</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Find the action by name and workflow</span>
+
+<span class="sd">        :param action_name: the action name</span>
+<span class="sd">        :param workflow: the owning workflow</span>
+<span class="sd">        :return: the action object or None if not found</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">Action</span><span class="o">.</span><span class="n">listActions</span><span class="p">(</span><span class="n">filters</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">action_name</span><span class="p">,</span>
+                                                                         <span class="n">workflow_id</span><span class="o">=</span><span class="n">workflow</span><span class="o">.</span><span class="n">id</span><span class="p">))</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">total</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;More than one action object found.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">total</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="SyncManager.find_trigger"><a class="viewcode-back" href="../../api.html#dartclient.core.SyncManager.find_trigger">[docs]</a>    <span class="k">def</span> <span class="nf">find_trigger</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trigger_name</span><span class="p">,</span> <span class="n">workflow</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Find the trigger by name</span>
+
+<span class="sd">        :param trigger_name: the trigger name</span>
+<span class="sd">        :param workflow: the owning workflow</span>
+<span class="sd">        :return: the trigger object or None if not found</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">Trigger</span><span class="o">.</span><span class="n">listTriggers</span><span class="p">(</span><span class="n">filters</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">trigger_name</span><span class="p">,</span>
+                                                                           <span class="n">workflow_ids</span><span class="o">=</span><span class="n">workflow</span><span class="o">.</span><span class="n">id</span><span class="p">))</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">total</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;More than one trigger object found.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">total</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="SyncManager.find_dataset"><a class="viewcode-back" href="../../api.html#dartclient.core.SyncManager.find_dataset">[docs]</a>    <span class="k">def</span> <span class="nf">find_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Find the dataset by name</span>
+
+<span class="sd">        :param dataset_name: the dataset name</span>
+<span class="sd">        :return: the dataset object or None if not found</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">listDatasets</span><span class="p">(</span>
+            <span class="n">filters</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">dataset_name</span><span class="p">))</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">total</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;More than one dataset object found.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">total</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="SyncManager.clean_datastore"><a class="viewcode-back" href="../../api.html#dartclient.core.SyncManager.clean_datastore">[docs]</a>    <span class="k">def</span> <span class="nf">clean_datastore</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datastore</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Clean up the datastore, its workflows, etc.</span>
+
+<span class="sd">        :param datastore: the datastore object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">datastore</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">Workflow</span><span class="o">.</span><span class="n">listWorkflows</span><span class="p">(</span>
+                <span class="n">filters</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">datastore_id</span><span class="o">=</span><span class="n">datastore</span><span class="o">.</span><span class="n">id</span><span class="p">),</span>
+                <span class="n">limit</span><span class="o">=</span><span class="mi">1024</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">total</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">workflow</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">results</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">clean_workflow</span><span class="p">(</span><span class="n">workflow</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">Datastore</span><span class="o">.</span><span class="n">deleteDatastore</span><span class="p">(</span>
+                <span class="n">datastore_id</span><span class="o">=</span><span class="n">datastore</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SyncManager.clean_workflow"><a class="viewcode-back" href="../../api.html#dartclient.core.SyncManager.clean_workflow">[docs]</a>    <span class="k">def</span> <span class="nf">clean_workflow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Clean up the workflow, its actions and triggers, etc.</span>
+
+<span class="sd">        :param workflow: the workflow object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">workflow</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">Action</span><span class="o">.</span><span class="n">listActions</span><span class="p">(</span>
+                <span class="n">filters</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">workflow_id</span><span class="o">=</span><span class="n">workflow</span><span class="o">.</span><span class="n">id</span><span class="p">),</span>
+                <span class="n">limit</span><span class="o">=</span><span class="mi">1024</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">total</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">results</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">clean_action</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+
+            <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">Trigger</span><span class="o">.</span><span class="n">listTriggers</span><span class="p">(</span>
+                <span class="n">filters</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">workflow_ids</span><span class="o">=</span><span class="n">workflow</span><span class="o">.</span><span class="n">id</span><span class="p">),</span>
+                <span class="n">limit</span><span class="o">=</span><span class="mi">1024</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">total</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">trigger</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">results</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">clean_trigger</span><span class="p">(</span><span class="n">trigger</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">Workflow</span><span class="o">.</span><span class="n">deleteWorkflow</span><span class="p">(</span>
+                <span class="n">workflow_id</span><span class="o">=</span><span class="n">workflow</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SyncManager.clean_action"><a class="viewcode-back" href="../../api.html#dartclient.core.SyncManager.clean_action">[docs]</a>    <span class="k">def</span> <span class="nf">clean_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Clean up the action</span>
+
+<span class="sd">        :param action: the action object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">action</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">Action</span><span class="o">.</span><span class="n">deleteAction</span><span class="p">(</span><span class="n">action_id</span><span class="o">=</span><span class="n">action</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SyncManager.clean_trigger"><a class="viewcode-back" href="../../api.html#dartclient.core.SyncManager.clean_trigger">[docs]</a>    <span class="k">def</span> <span class="nf">clean_trigger</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trigger</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Clean up the trigger</span>
+
+<span class="sd">        :param trigger: the trigger object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">trigger</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">Trigger</span><span class="o">.</span><span class="n">deleteTrigger</span><span class="p">(</span><span class="n">trigger_id</span><span class="o">=</span><span class="n">trigger</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SyncManager.clean_dataset"><a class="viewcode-back" href="../../api.html#dartclient.core.SyncManager.clean_dataset">[docs]</a>    <span class="k">def</span> <span class="nf">clean_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Clean up the dataset</span>
+
+<span class="sd">        :param dataset: the dataset object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">dataset</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">deleteDataset</span><span class="p">(</span><span class="n">dataset_id</span><span class="o">=</span><span class="n">dataset</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SyncManager.sync_datastore"><a class="viewcode-back" href="../../api.html#dartclient.core.SyncManager.sync_datastore">[docs]</a>    <span class="k">def</span> <span class="nf">sync_datastore</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datastore_name</span><span class="p">,</span> <span class="n">datastore_state</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Synchronize a datastore with Dart.</span>
+
+<span class="sd">        :param datastore_name: The name of the datastore.</span>
+<span class="sd">        :param datastore_state: The state of the datastore.</span>
+<span class="sd">                                The default state for emr_engine should be &#39;TEMPLATE&#39;, otherwise &#39;ACTIVE&#39;</span>
+<span class="sd">        :param callback: A function with a signature (datastore) =&gt; datastore</span>
+<span class="sd">        :return: The created or updated datastore.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">datastore</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_datastore</span><span class="p">(</span><span class="n">datastore_name</span><span class="p">,</span> <span class="n">datastore_state</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">datastore</span><span class="p">:</span>
+            <span class="n">datastore</span> <span class="o">=</span> <span class="n">callback</span><span class="p">(</span><span class="n">datastore</span><span class="p">)</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">Datastore</span><span class="o">.</span><span class="n">updateDatastore</span><span class="p">(</span>
+                <span class="n">datastore_id</span><span class="o">=</span><span class="n">datastore</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">datastore</span><span class="o">=</span><span class="n">datastore</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">results</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">datastore</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_factory</span><span class="o">.</span><span class="n">create_datastore</span><span class="p">()</span>
+            <span class="n">datastore</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">datastore_name</span>
+            <span class="n">datastore</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">datastore_state</span>
+            <span class="n">datastore</span> <span class="o">=</span> <span class="n">callback</span><span class="p">(</span><span class="n">datastore</span><span class="p">)</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">Datastore</span><span class="o">.</span><span class="n">createDatastore</span><span class="p">(</span>
+                <span class="n">datastore</span><span class="o">=</span><span class="n">datastore</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">results</span></div>
+
+<div class="viewcode-block" id="SyncManager.sync_workflow"><a class="viewcode-back" href="../../api.html#dartclient.core.SyncManager.sync_workflow">[docs]</a>    <span class="k">def</span> <span class="nf">sync_workflow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow_name</span><span class="p">,</span> <span class="n">datastore</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Synchronize a workflow with Dart.</span>
+
+<span class="sd">        :param workflow_name: The name of the workflow.</span>
+<span class="sd">        :param datastore: The datastore containing the workflow.</span>
+<span class="sd">        :param callback: A function with a signature (workflow) =&gt; workflow</span>
+<span class="sd">        :return: The created or updated workflow.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">workflow</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_workflow</span><span class="p">(</span><span class="n">workflow_name</span><span class="p">,</span> <span class="n">datastore</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">workflow</span><span class="p">:</span>
+            <span class="n">workflow</span> <span class="o">=</span> <span class="n">callback</span><span class="p">(</span><span class="n">workflow</span><span class="p">)</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">Workflow</span><span class="o">.</span><span class="n">updateWorkflow</span><span class="p">(</span>
+                <span class="n">workflow_id</span><span class="o">=</span><span class="n">workflow</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">workflow</span><span class="o">=</span><span class="n">workflow</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">results</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">workflow</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_factory</span><span class="o">.</span><span class="n">create_workflow</span><span class="p">()</span>
+            <span class="n">workflow</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">workflow_name</span>
+            <span class="n">workflow</span> <span class="o">=</span> <span class="n">callback</span><span class="p">(</span><span class="n">workflow</span><span class="p">)</span>
+            <span class="n">workflow</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">datastore_id</span> <span class="o">=</span> <span class="n">datastore</span><span class="o">.</span><span class="n">id</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">Datastore</span><span class="o">.</span><span class="n">createDatastoreWorkflow</span><span class="p">(</span>
+                <span class="n">datastore_id</span><span class="o">=</span><span class="n">datastore</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">workflow</span><span class="o">=</span><span class="n">workflow</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">results</span></div>
+
+<div class="viewcode-block" id="SyncManager.sync_action"><a class="viewcode-back" href="../../api.html#dartclient.core.SyncManager.sync_action">[docs]</a>    <span class="k">def</span> <span class="nf">sync_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action_name</span><span class="p">,</span> <span class="n">workflow</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">subscription</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Synchronize an action with Dart.</span>
+
+<span class="sd">        :param action_name: The name of the action.</span>
+<span class="sd">        :param workflow: The workflow containing the action.</span>
+<span class="sd">        :param callback: A function with a signature (action) =&gt; action</span>
+<span class="sd">        :return: The created or updated action.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">action</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_action</span><span class="p">(</span><span class="n">action_name</span><span class="p">,</span> <span class="n">workflow</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">action</span><span class="p">:</span>
+            <span class="n">action</span> <span class="o">=</span> <span class="n">callback</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">dataset</span><span class="p">:</span>
+                <span class="n">action</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">dataset_id</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">id</span>
+            <span class="k">if</span> <span class="n">subscription</span><span class="p">:</span>
+                <span class="n">action</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">subscription_id</span> <span class="o">=</span> <span class="n">subscription</span><span class="o">.</span><span class="n">id</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">Action</span><span class="o">.</span><span class="n">updateAction</span><span class="p">(</span>
+                <span class="n">action_id</span><span class="o">=</span><span class="n">action</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">action</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">results</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">action</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_factory</span><span class="o">.</span><span class="n">create_action</span><span class="p">()</span>
+            <span class="n">action</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">action_name</span>
+            <span class="n">action</span> <span class="o">=</span> <span class="n">callback</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">dataset</span><span class="p">:</span>
+                <span class="n">action</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">dataset_id</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">id</span>
+            <span class="k">if</span> <span class="n">subscription</span><span class="p">:</span>
+                <span class="n">action</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">subscription_id</span> <span class="o">=</span> <span class="n">subscription</span><span class="o">.</span><span class="n">id</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">Workflow</span><span class="o">.</span><span class="n">createWorkflowActions</span><span class="p">(</span>
+                <span class="n">workflow_id</span><span class="o">=</span><span class="n">workflow</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">actions</span><span class="o">=</span><span class="p">[</span><span class="n">action</span><span class="p">])</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="SyncManager.sync_trigger"><a class="viewcode-back" href="../../api.html#dartclient.core.SyncManager.sync_trigger">[docs]</a>    <span class="k">def</span> <span class="nf">sync_trigger</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trigger_name</span><span class="p">,</span> <span class="n">workflow</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">subscription</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Synchronize a trigger with Dart.</span>
+
+<span class="sd">        :param trigger_name: The name of the trigger</span>
+<span class="sd">        :param callback: A function with a signature (trigger) =&gt; trigger</span>
+<span class="sd">        :return: The created or updated trigger.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">trigger</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_trigger</span><span class="p">(</span><span class="n">trigger_name</span><span class="p">,</span> <span class="n">workflow</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">trigger</span><span class="p">:</span>
+            <span class="n">trigger</span> <span class="o">=</span> <span class="n">callback</span><span class="p">(</span><span class="n">trigger</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">subscription</span><span class="p">:</span>
+                <span class="n">trigger</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">subcription_id</span> <span class="o">=</span> <span class="n">subscription</span><span class="o">.</span><span class="n">id</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">Trigger</span><span class="o">.</span><span class="n">updateTrigger</span><span class="p">(</span>
+                <span class="n">trigger_id</span><span class="o">=</span><span class="n">trigger</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">trigger</span><span class="o">=</span><span class="n">trigger</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">results</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">trigger</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_factory</span><span class="o">.</span><span class="n">create_trigger</span><span class="p">()</span>
+            <span class="n">trigger</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">trigger_name</span>
+            <span class="n">trigger</span> <span class="o">=</span> <span class="n">callback</span><span class="p">(</span><span class="n">trigger</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">workflow</span><span class="p">:</span>
+                <span class="n">trigger</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">workflow_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">workflow</span><span class="o">.</span><span class="n">id</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">subscription</span><span class="p">:</span>
+                <span class="n">trigger</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">subcription_id</span> <span class="o">=</span> <span class="n">subscription</span><span class="o">.</span><span class="n">id</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">Trigger</span><span class="o">.</span><span class="n">createTrigger</span><span class="p">(</span>
+                <span class="n">trigger</span><span class="o">=</span><span class="n">trigger</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">results</span></div>
+
+<div class="viewcode-block" id="SyncManager.sync_dataset"><a class="viewcode-back" href="../../api.html#dartclient.core.SyncManager.sync_dataset">[docs]</a>    <span class="k">def</span> <span class="nf">sync_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Synchronize a dataset with Dataset.</span>
+
+<span class="sd">        :param dataset_name: The name of the dataset</span>
+<span class="sd">        :param callback: A function with a signature (dataset) =&gt; dataset</span>
+<span class="sd">        :return: The created or updated dataset</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dataset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_dataset</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">dataset</span><span class="p">:</span>
+            <span class="n">dataset</span> <span class="o">=</span> <span class="n">callback</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">updateDataset</span><span class="p">(</span>
+                <span class="n">dataset_id</span><span class="o">=</span><span class="n">dataset</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">results</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dataset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_factory</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">()</span>
+            <span class="n">dataset</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">dataset_name</span>
+            <span class="n">dataset</span> <span class="o">=</span> <span class="n">callback</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">createDataset</span><span class="p">(</span>
+                <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">results</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, RetailMeNot, Inc..
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
