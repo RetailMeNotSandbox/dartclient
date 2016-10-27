@@ -14,6 +14,5 @@ def test_authenticator_with_client(integration_test_client,
         host=urlparse.urlparse(integration_test_api_url).hostname,
         username=integration_test_api_key,
         password=integration_test_secret_key)
-
     response = integration_test_client.Datastore.listDatastores().result()
     assert hasattr(response, 'total')
