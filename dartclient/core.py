@@ -228,16 +228,23 @@ class SyncManager(object):
             raise Exception("More than one workflow object found.")
         return response.results[0] if response.total > 0 else None
 
-    def find_action(self, action_name, workflow):
+    def find_action(self, action_name, workflow, action_state=None):
         """
         Find the action by name and workflow
 
         :param action_name: the action name
+        :param action_state: the action state (optional)
         :param workflow: the owning workflow
         :return: the action object or None if not found
         """
-        response = self.client.Action.listActions(filters=self.filter_by(name=action_name,
-                                                                         workflow_id=workflow.id)).result()
+        filters = {
+            'name': action_name,
+            'workflow_id': workflow.id
+        }
+        if action_state:
+            filters['state'] = action_state
+        response = self.client.Action.listActions(
+            filters=self.filter_by(**filters)).result()
         if response.total > 1:
             raise Exception("More than one action object found.")
         return response.results[0] if response.total > 0 else None
@@ -386,16 +393,18 @@ class SyncManager(object):
                 datastore_id=datastore.id, workflow=workflow).result()
             return response.results
 
-    def sync_action(self, action_name, workflow, callback, dataset=None, subscription=None):
+    def sync_action(self, action_name, workflow, callback, dataset=None, subscription=None, action_state=None):
         """
         Synchronize an action with Dart.
 
         :param action_name: The name of the action.
+        :param action_state: The state of the action.
         :param workflow: The workflow containing the action.
         :param callback: A function with a signature (action) => action
         :return: The created or updated action.
         """
-        action = self.find_action(action_name, workflow)
+        action = self.find_action(
+            action_name, workflow, action_state=action_state)
         if action:
             action = callback(action)
             if dataset:
@@ -408,6 +417,8 @@ class SyncManager(object):
         else:
             action = self.model_factory.create_action()
             action.data.name = action_name
+            if action_state:
+                action.data.state = action_state
             action = callback(action)
             if dataset:
                 action.args.dataset_id = dataset.id
