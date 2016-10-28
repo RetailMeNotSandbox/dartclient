@@ -11,6 +11,10 @@ install it from source:
 
 * pip install git+https://github.com/RetailMeNotSandbox/dartclient.git
 
+or by adding the following to your requirements.txt file:
+
+* -e git+https://github.com/RetailMeNotSandbox/dartclient.git#egg=dartclient
+
 Connecting to Dart
 ------------------
 

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>API Reference &#8212; dartclient 1.1.dev1 documentation</title>
+    <title>API Reference &#8212; dartclient 1.1.dev3 documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.1.dev1',
+        VERSION:     '1.1.dev3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="dartclient 1.1.dev1 documentation" href="index.html" />
+    <link rel="top" title="dartclient 1.1.dev3 documentation" href="index.html" />
     <link rel="prev" title="Quickstart" href="quickstart.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
@@ -219,7 +219,7 @@ model with a Dart server.</p>
 
 <dl class="method">
 <dt id="dartclient.core.SyncManager.find_action">
-<code class="descname">find_action</code><span class="sig-paren">(</span><em>action_name</em>, <em>workflow</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dartclient/core.html#SyncManager.find_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dartclient.core.SyncManager.find_action" title="Permalink to this definition">¶</a></dt>
+<code class="descname">find_action</code><span class="sig-paren">(</span><em>action_name</em>, <em>workflow</em>, <em>action_state=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dartclient/core.html#SyncManager.find_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dartclient.core.SyncManager.find_action" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find the action by name and workflow</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -227,6 +227,7 @@ model with a Dart server.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>action_name</strong> &#8211; the action name</li>
+<li><strong>action_state</strong> &#8211; the action state (optional)</li>
 <li><strong>workflow</strong> &#8211; the owning workflow</li>
 </ul>
 </td>
@@ -320,7 +321,7 @@ for emr_engine should be &#8216;TEMPLATE&#8217;, otherwise &#8216;ACTIVE&#8217;.
 
 <dl class="method">
 <dt id="dartclient.core.SyncManager.sync_action">
-<code class="descname">sync_action</code><span class="sig-paren">(</span><em>action_name</em>, <em>workflow</em>, <em>callback</em>, <em>dataset=None</em>, <em>subscription=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dartclient/core.html#SyncManager.sync_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dartclient.core.SyncManager.sync_action" title="Permalink to this definition">¶</a></dt>
+<code class="descname">sync_action</code><span class="sig-paren">(</span><em>action_name</em>, <em>workflow</em>, <em>callback</em>, <em>dataset=None</em>, <em>subscription=None</em>, <em>action_state=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dartclient/core.html#SyncManager.sync_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dartclient.core.SyncManager.sync_action" title="Permalink to this definition">¶</a></dt>
 <dd><p>Synchronize an action with Dart.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -328,6 +329,7 @@ for emr_engine should be &#8216;TEMPLATE&#8217;, otherwise &#8216;ACTIVE&#8217;.
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>action_name</strong> &#8211; The name of the action.</li>
+<li><strong>action_state</strong> &#8211; The state of the action.</li>
 <li><strong>workflow</strong> &#8211; The workflow containing the action.</li>
 <li><strong>callback</strong> &#8211; A function with a signature (action) =&gt; action</li>
 </ul>

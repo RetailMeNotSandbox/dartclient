@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>dartclient.core &#8212; dartclient 1.1.dev1 documentation</title>
+    <title>dartclient.core &#8212; dartclient 1.1.dev3 documentation</title>
     
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '1.1.dev1',
+        VERSION:     '1.1.dev3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="top" title="dartclient 1.1.dev1 documentation" href="../../index.html" />
+    <link rel="top" title="dartclient 1.1.dev3 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" />
    
   <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
@@ -273,16 +273,23 @@
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;More than one workflow object found.&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">total</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span></div>
 
-<div class="viewcode-block" id="SyncManager.find_action"><a class="viewcode-back" href="../../api.html#dartclient.core.SyncManager.find_action">[docs]</a>    <span class="k">def</span> <span class="nf">find_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action_name</span><span class="p">,</span> <span class="n">workflow</span><span class="p">):</span>
+<div class="viewcode-block" id="SyncManager.find_action"><a class="viewcode-back" href="../../api.html#dartclient.core.SyncManager.find_action">[docs]</a>    <span class="k">def</span> <span class="nf">find_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action_name</span><span class="p">,</span> <span class="n">workflow</span><span class="p">,</span> <span class="n">action_state</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Find the action by name and workflow</span>
 
 <span class="sd">        :param action_name: the action name</span>
+<span class="sd">        :param action_state: the action state (optional)</span>
 <span class="sd">        :param workflow: the owning workflow</span>
 <span class="sd">        :return: the action object or None if not found</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">Action</span><span class="o">.</span><span class="n">listActions</span><span class="p">(</span><span class="n">filters</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">action_name</span><span class="p">,</span>
-                                                                         <span class="n">workflow_id</span><span class="o">=</span><span class="n">workflow</span><span class="o">.</span><span class="n">id</span><span class="p">))</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
+        <span class="n">filters</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">action_name</span><span class="p">,</span>
+            <span class="s1">&#39;workflow_id&#39;</span><span class="p">:</span> <span class="n">workflow</span><span class="o">.</span><span class="n">id</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="n">action_state</span><span class="p">:</span>
+            <span class="n">filters</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">action_state</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">Action</span><span class="o">.</span><span class="n">listActions</span><span class="p">(</span>
+            <span class="n">filters</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="o">**</span><span class="n">filters</span><span class="p">))</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">total</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;More than one action object found.&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">total</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span></div>
@@ -431,16 +438,18 @@
                 <span class="n">datastore_id</span><span class="o">=</span><span class="n">datastore</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">workflow</span><span class="o">=</span><span class="n">workflow</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
             <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">results</span></div>
 
-<div class="viewcode-block" id="SyncManager.sync_action"><a class="viewcode-back" href="../../api.html#dartclient.core.SyncManager.sync_action">[docs]</a>    <span class="k">def</span> <span class="nf">sync_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action_name</span><span class="p">,</span> <span class="n">workflow</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">subscription</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="SyncManager.sync_action"><a class="viewcode-back" href="../../api.html#dartclient.core.SyncManager.sync_action">[docs]</a>    <span class="k">def</span> <span class="nf">sync_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action_name</span><span class="p">,</span> <span class="n">workflow</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">subscription</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">action_state</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Synchronize an action with Dart.</span>
 
 <span class="sd">        :param action_name: The name of the action.</span>
+<span class="sd">        :param action_state: The state of the action.</span>
 <span class="sd">        :param workflow: The workflow containing the action.</span>
 <span class="sd">        :param callback: A function with a signature (action) =&gt; action</span>
 <span class="sd">        :return: The created or updated action.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">action</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_action</span><span class="p">(</span><span class="n">action_name</span><span class="p">,</span> <span class="n">workflow</span><span class="p">)</span>
+        <span class="n">action</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_action</span><span class="p">(</span>
+            <span class="n">action_name</span><span class="p">,</span> <span class="n">workflow</span><span class="p">,</span> <span class="n">action_state</span><span class="o">=</span><span class="n">action_state</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">action</span><span class="p">:</span>
             <span class="n">action</span> <span class="o">=</span> <span class="n">callback</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">dataset</span><span class="p">:</span>
@@ -453,6 +462,8 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">action</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_factory</span><span class="o">.</span><span class="n">create_action</span><span class="p">()</span>
             <span class="n">action</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">action_name</span>
+            <span class="k">if</span> <span class="n">action_state</span><span class="p">:</span>
+                <span class="n">action</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">action_state</span>
             <span class="n">action</span> <span class="o">=</span> <span class="n">callback</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">dataset</span><span class="p">:</span>
                 <span class="n">action</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">dataset_id</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">id</span>
