@@ -25,6 +25,10 @@ Or clone the repository for development:
 * git clone this repository
 * pip install -r requirements-dev.txt
 
+Documentation
+-------------
+* `docs <https://retailmenotsandbox.github.io/dartclient/>`__
+
 Related Projects
 ----------------
 * `bravado <https://github.com/Yelp/bravado>`__
