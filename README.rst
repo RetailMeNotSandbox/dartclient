@@ -16,10 +16,18 @@ install it from source:
 
 * pip install git+https://github.com/RetailMeNotSandbox/dartclient.git
 
+Or by adding the following to your requirements.txt file:
+
+* -e git+https://github.com/RetailMeNotSandbox/dartclient.git#egg=dartclient
+
 Or clone the repository for development:
 
 * git clone this repository
 * pip install -r requirements-dev.txt
+
+Documentation
+-------------
+* `docs <https://retailmenotsandbox.github.io/dartclient/>`__
 
 Related Projects
 ----------------
