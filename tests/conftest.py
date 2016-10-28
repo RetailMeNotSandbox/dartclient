@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from dartclient.core import create_client
+from dartclient.core import create_client, create_basic_authenticator
 from dartclient.core import ModelFactory
 
 
@@ -42,6 +42,11 @@ def integration_test_secret_key():
 
 
 @pytest.fixture(scope="session")
+def integration_test_host():
+    return os.environ['DART_HOST']
+
+
+@pytest.fixture(scope="session")
 def integration_test_url():
     return os.environ['DART_URL']
 
@@ -57,5 +62,14 @@ def integration_test_spec_url(integration_test_api_url):
 
 
 @pytest.fixture(scope="session")
-def integration_test_client(integration_test_spec_url):
-    return create_client(integration_test_spec_url)
+def integration_test_authenticator(integration_test_host, integration_test_api_key, integration_test_secret_key):
+    return create_basic_authenticator(
+        host=integration_test_host,
+        username=integration_test_api_key,
+        password=integration_test_secret_key)
+
+
+@pytest.fixture(scope="session")
+def integration_test_client(integration_test_spec_url, integration_test_authenticator):
+    return create_client(integration_test_spec_url,
+                         authenticator=integration_test_authenticator)

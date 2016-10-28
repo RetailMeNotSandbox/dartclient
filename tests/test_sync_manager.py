@@ -4,6 +4,28 @@ from bravado.client import SwaggerClient
 from dartclient.core import create_sync_manager, ModelFactory, SyncManager
 
 
+# Set HTTP_DEBUG=true (case sensitive) to log HTTP traffic
+import os
+if os.environ.get('HTTP_DEBUG') == 'true':
+    import logging
+    # These two lines enable debugging at httplib level (requests->urllib3->http.client)
+    # You will see the REQUEST, including HEADERS and DATA, and RESPONSE with HEADERS but without DATA.
+    # The only thing missing will be the response.body which is not logged.
+    try:
+        import http.client as http_client
+    except ImportError:
+        # Python 2
+        import httplib as http_client
+    http_client.HTTPConnection.debuglevel = 1
+
+    # You must initialize logging, otherwise you'll not see debug output.
+    logging.basicConfig()
+    logging.getLogger().setLevel(logging.DEBUG)
+    requests_log = logging.getLogger("requests.packages.urllib3")
+    requests_log.setLevel(logging.DEBUG)
+    requests_log.propagate = True
+
+
 def test_create_sync_manager_no_args():
     with pytest.raises(RuntimeError):
         create_sync_manager()
@@ -60,7 +82,7 @@ class TestDartModel(object):
     }
 
     DATASTORE1_NAME = 'dartclient_test_datastore1'
-    DATASTORE1_STATE = 'TEMPLATE'
+    DATASTORE1_STATE = 'INACTIVE'
     WORKFLOW1_NAME = 'dartclient_test_workflow1'
     ACTION1_NAME = 'dartclient_test_action1'
     ACTION2_NAME = 'dartclient_test_action2'
@@ -103,19 +125,16 @@ class TestDartModel(object):
         }
         datastore.data.concurrency = 1
         datastore.data.engine_name = 'emr_engine'
-        datastore.data.name = self.DATASTORE1_NAME
         return datastore
 
     def define_workflow1(self, workflow):
         workflow.data.concurrency = 1
         workflow.data.engine_name = 'emr_engine'
-        workflow.data.name = self.WORKFLOW1_NAME
         return workflow
 
     def define_action1(self, action):
         action.data.action_type_name = 'start_datastore'
         action.data.engine_name = 'emr_engine'
-        action.data.name = self.ACTION1_NAME
         action.data.order_idx = 0
         action.data.state = 'TEMPLATE'
         return action
@@ -123,7 +142,6 @@ class TestDartModel(object):
     def define_action2(self, action):
         action.data.action_type_name = 'terminate_datastore'
         action.data.engine_name = 'emr_engine'
-        action.data.name = self.ACTION2_NAME
         action.data.order_idx = 1
         action.data.state = 'TEMPLATE'
         return action
@@ -132,7 +150,6 @@ class TestDartModel(object):
         trigger.data.args = {
             'cron_pattern': '0 0 * * ? *'
         }
-        trigger.data.name = self.TRIGGER1_NAME
         trigger.data.trigger_type_name = 'scheduled'
         return trigger
 
@@ -151,9 +168,8 @@ class TestDartModel(object):
         dataset.data.data_format.row_format = 'DELIMITED'
         dataset.data.load_type = 'INSERT'
         dataset.data.location = 's3://example-bucket/path'
-        dataset.data.name = self.DATASET1_NAME
         dataset.data.table_name = 'table1'
-        dataset.data.user_id = 'user1'
+        # dataset.data.user_id = 'user1'
         return dataset
 
     def check_clean(self):
@@ -252,7 +268,7 @@ class TestDartModel(object):
         assert dataset.data.location == 's3://example-bucket/path'
         assert dataset.data.name == self.DATASET1_NAME
         assert dataset.data.table_name == 'table1'
-        assert dataset.data.user_id == 'user1'
+        # assert dataset.data.user_id == 'user1'
 
     def validate_object(self, obj):
         assert obj.created is not None and isinstance(obj.created, basestring)
