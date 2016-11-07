@@ -124,6 +124,7 @@ class ModelFactory(object):
         """
         get_model = self.client.get_model
         datastore = get_model('Datastore')(data=get_model('DatastoreData')())
+        datastore.data.engine_name = self.engine_name
         datastore.data.tags = self.tags
         return datastore
 
@@ -136,6 +137,7 @@ class ModelFactory(object):
         """
         get_model = self.client.get_model
         workflow = get_model('Workflow')(data=get_model('WorkflowData')())
+        workflow.data.engine_name = self.engine_name
         workflow.data.on_failure_email = self.on_failure_email
         workflow.data.on_started_email = self.on_started_email
         workflow.data.on_success_email = self.on_success_email
@@ -151,6 +153,7 @@ class ModelFactory(object):
         """
         get_model = self.client.get_model
         action = get_model('Action')(data=get_model('ActionData')())
+        action.data.engine_name = self.engine_name
         action.data.on_failure_email = self.on_failure_email
         action.data.on_success_email = self.on_success_email
         action.data.tags = self.tags
@@ -178,6 +181,20 @@ class ModelFactory(object):
         dataset.data.data_format = get_model('DataFormat')()
         dataset.data.tags = self.tags
         return dataset
+
+    def create_subscription(self):
+        """
+        Construct a subscription object and set the tags field to the default.
+
+        :return: the subscription object
+        """
+        get_model = self.client.get_model
+        subscription = get_model('Subscription')(
+            data=get_model('SubscriptionData')())
+        subscription.data.on_failure_email = self.on_failure_email
+        subscription.data.on_success_email = self.on_success_email
+        subscription.data.tags = self.tags
+        return subscription
 
 
 class SyncManager(object):
@@ -276,6 +293,19 @@ class SyncManager(object):
             raise Exception("More than one dataset object found.")
         return response.results[0] if response.total > 0 else None
 
+    def find_subscription(self, subscription_name):
+        """
+        Find the subscription by name
+
+        :param subcription_name: the subscription name
+        :return: the subscription object or None if not found
+        """
+        response = self.client.Subscription.listSubscriptions(
+            filters=self.filter_by(name=subscription_name)).result()
+        if response.total > 1:
+            raise Exception("More than one subscription object found.")
+        return response.results[0] if response.total > 0 else None
+
     def clean_datastore(self, datastore):
         """
         Clean up the datastore, its workflows, etc.
@@ -342,7 +372,22 @@ class SyncManager(object):
         :param dataset: the dataset object
         """
         if dataset:
+            response = self.client.Subscription.listSubscriptions(
+                filters=self.filter_by(dataset_id=dataset.id)).result()
+            if response.total > 0:
+                for subscription in response.results:
+                    self.clean_subscription(subscription)
             self.client.Dataset.deleteDataset(dataset_id=dataset.id).result()
+
+    def clean_subscription(self, subscription):
+        """
+        Clean up the subscription
+
+        :param subscription: the subscription object
+        """
+        if subscription:
+            self.client.Subscription.deleteSubscription(
+                subscription_id=subscription.id).result()
 
     def sync_datastore(self, datastore_name, datastore_state, callback):
         """
@@ -408,9 +453,13 @@ class SyncManager(object):
         if action:
             action = callback(action)
             if dataset:
-                action.args.dataset_id = dataset.id
+                if not action.data.args:
+                    action.data.args = {}
+                action.data.args['dataset_id'] = dataset.id
             if subscription:
-                action.args.subscription_id = subscription.id
+                if not action.data.args:
+                    action.data.args = {}
+                action.data.args['subscription_id'] = subscription.id
             response = self.client.Action.updateAction(
                 action_id=action.id, action=action).result()
             return response.results
@@ -421,9 +470,13 @@ class SyncManager(object):
                 action.data.state = action_state
             action = callback(action)
             if dataset:
-                action.args.dataset_id = dataset.id
+                if not action.data.args:
+                    action.data.args = {}
+                action.data.args['dataset_id'] = dataset.id
             if subscription:
-                action.args.subscription_id = subscription.id
+                if not action.data.args:
+                    action.data.args = {}
+                action.data.args['subscription_id'] = subscription.id
             response = self.client.Workflow.createWorkflowActions(
                 workflow_id=workflow.id, actions=[action]).result()
             return response.results[0]
@@ -440,7 +493,9 @@ class SyncManager(object):
         if trigger:
             trigger = callback(trigger)
             if subscription:
-                trigger.args.subcription_id = subscription.id
+                if not trigger.data.args:
+                    trigger.data.args = {}
+                trigger.data.args['subscription_id'] = subscription.id
             response = self.client.Trigger.updateTrigger(
                 trigger_id=trigger.id, trigger=trigger).result()
             return response.results
@@ -451,14 +506,16 @@ class SyncManager(object):
             if workflow:
                 trigger.data.workflow_ids = [workflow.id]
             if subscription:
-                trigger.args.subcription_id = subscription.id
+                if not trigger.data.args:
+                    trigger.data.args = {}
+                trigger.data.args['subscription_id'] = subscription.id
             response = self.client.Trigger.createTrigger(
                 trigger=trigger).result()
             return response.results
 
     def sync_dataset(self, dataset_name, callback):
         """
-        Synchronize a dataset with Dataset.
+        Synchronize a dataset with Dart.
 
         :param dataset_name: The name of the dataset
         :param callback: A function with a signature (dataset) => dataset
@@ -477,3 +534,23 @@ class SyncManager(object):
             response = self.client.Dataset.createDataset(
                 dataset=dataset).result()
             return response.results
+
+    def sync_subscription(self, subscription_name, dataset, callback):
+        """
+        Synchronize a subscription with Dart.
+
+        :param subscription_name: The name of the subscription
+        :param dataset: The parent dataset of the subscription
+        :param callback: A function with a signature (subscription) => subscription
+        :return: The created or updated subscription
+        """
+        subscription = self.find_subscription(subscription_name)
+        if subscription:
+            self.clean_subscription(subscription)
+        subscription = self.model_factory.create_subscription()
+        subscription.data.name = subscription_name
+        subscription.data.dataset_id = dataset.id
+        subscription = callback(subscription)
+        response = self.client.Dataset.createDatasetSubscription(
+            subscription=subscription, dataset_id=dataset.id).result()
+        return response.results

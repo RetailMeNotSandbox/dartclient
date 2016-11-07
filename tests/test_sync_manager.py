@@ -89,6 +89,14 @@ class TestDartModel(object):
     TRIGGER1_NAME = 'dartclient_test_trigger1'
     DATASET1_NAME = 'dartclient_test_dataset1'
 
+    DATASTORE2_NAME = 'dartclient_test_datastore2'
+    DATASTORE2_STATE = 'ACTIVE'
+    WORKFLOW2_NAME = 'dartclient_test_workflow2'
+    SUBSCRIPTION1_NAME = 'dartclient_test_subscription1'
+    ACTION3_NAME = 'dartclient_test_action3'
+    ACTION4_NAME = 'dartclient_test_action4'
+    TRIGGER2_NAME = 'dartclient_test_trigger2'
+
     def __init__(self, client):
         self.client = client
         self.sync_manager = create_sync_manager(
@@ -98,22 +106,39 @@ class TestDartModel(object):
     def clean(self):
         self.sync_manager.clean_datastore(self.sync_manager.find_datastore(
             self.DATASTORE1_NAME, self.DATASTORE1_STATE))
+        self.sync_manager.clean_datastore(self.sync_manager.find_datastore(
+            self.DATASTORE2_NAME, self.DATASTORE2_STATE))
+        self.sync_manager.clean_subscription(
+            self.sync_manager.find_subscription(self.SUBSCRIPTION1_NAME))
         self.sync_manager.clean_dataset(
             self.sync_manager.find_dataset(self.DATASET1_NAME))
 
     def synchronize(self):
-        ds = self.sync_manager.sync_datastore(
+        ds1 = self.sync_manager.sync_datastore(
             self.DATASTORE1_NAME, self.DATASTORE1_STATE, self.define_datastore1)
-        wf = self.sync_manager.sync_workflow(
-            self.WORKFLOW1_NAME, ds, self.define_workflow1)
+        wf1 = self.sync_manager.sync_workflow(
+            self.WORKFLOW1_NAME, ds1, self.define_workflow1)
         self.sync_manager.sync_action(
-            self.ACTION1_NAME, wf, self.define_action1)
+            self.ACTION1_NAME, wf1, self.define_action1)
         self.sync_manager.sync_action(
-            self.ACTION2_NAME, wf, self.define_action2)
+            self.ACTION2_NAME, wf1, self.define_action2)
         self.sync_manager.sync_trigger(
-            self.TRIGGER1_NAME, wf, self.define_trigger1)
-        self.sync_manager.sync_dataset(
+            self.TRIGGER1_NAME, wf1, self.define_trigger1)
+        dat1 = self.sync_manager.sync_dataset(
             self.DATASET1_NAME, self.define_dataset1)
+        sub1 = self.sync_manager.sync_subscription(
+            self.SUBSCRIPTION1_NAME, dat1, self.define_subscription1)
+
+        ds2 = self.sync_manager.sync_datastore(
+            self.DATASTORE2_NAME, self.DATASTORE2_STATE, self.define_datastore2)
+        wf2 = self.sync_manager.sync_workflow(
+            self.WORKFLOW2_NAME, ds2, self.define_workflow2)
+        self.sync_manager.sync_action(
+            self.ACTION3_NAME, wf2, self.define_action3, dataset=dat1)
+        self.sync_manager.sync_action(
+            self.ACTION4_NAME, wf2, self.define_action4, subscription=sub1)
+        self.sync_manager.sync_trigger(
+            self.TRIGGER2_NAME, wf2, self.define_trigger2, subscription=sub1)
 
     def define_datastore1(self, datastore):
         datastore.data.args = {
@@ -172,6 +197,46 @@ class TestDartModel(object):
         # dataset.data.user_id = 'user1'
         return dataset
 
+    def define_datastore2(self, datastore):
+        datastore.data.args = {
+            'action_sleep_time_in_seconds': 5
+        }
+        datastore.data.concurrency = 1
+        datastore.data.engine_name = 'no_op_engine'
+        return datastore
+
+    def define_workflow2(self, workflow):
+        workflow.data.concurrency = 1
+        workflow.data.engine_name = 'no_op_engine'
+        return workflow
+
+    def define_action3(self, action):
+        action.data.action_type_name = 'fake_load_dataset'
+        action.data.engine_name = 'no_op_engine'
+        action.data.order_idx = 0
+        action.data.state = 'TEMPLATE'
+        return action
+
+    def define_action4(self, action):
+        action.data.action_type_name = 'consume_subscription'
+        action.data.engine_name = 'no_op_engine'
+        action.data.order_idx = 1
+        action.data.state = 'TEMPLATE'
+        return action
+
+    def define_subscription1(self, subscription):
+        subscription.data.s3_path_start_prefix_inclusive = 's3://s3-rpt-uss-dat-warehouse/dart-tests/tst/'
+        subscription.data.state = 'INACTIVE'
+        return subscription
+
+    def define_trigger2(self, trigger):
+        trigger.data.args = {
+            'unconsumed_data_size_in_bytes': 20000
+        }
+        trigger.data.name = self.TRIGGER2_NAME
+        trigger.data.trigger_type_name = 'subscription_batch'
+        return trigger
+
     def check_clean(self):
         """
         Assert that the entities do not exist in Dart.
@@ -179,19 +244,30 @@ class TestDartModel(object):
         """
         assert self.sync_manager.find_datastore(
             self.DATASTORE1_NAME, self.DATASTORE1_STATE) is None
+        assert self.sync_manager.find_datastore(
+            self.DATASTORE2_NAME, self.DATASTORE2_STATE) is None
         assert self.sync_manager.find_dataset(self.DATASET1_NAME) is None
+        assert self.sync_manager.find_subscription(
+            self.SUBSCRIPTION1_NAME) is None
 
     def validate(self):
         """
         Validate that the entities in Dart are what this class defined them to be.
         :return:
         """
-        ds = self.validate_datastore1()
-        wf = self.validate_workflow1(ds)
-        self.validate_action1(wf)
-        self.validate_action2(wf)
-        self.validate_trigger1(wf)
-        self.validate_dataset1()
+        ds1 = self.validate_datastore1()
+        wf1 = self.validate_workflow1(ds1)
+        self.validate_action1(wf1)
+        self.validate_action2(wf1)
+        self.validate_trigger1(wf1)
+        dat1 = self.validate_dataset1()
+        sub1 = self.validate_subscription1(dat1)
+
+        ds2 = self.validate_datastore2()
+        wf2 = self.validate_workflow2(ds2)
+        self.validate_action3(wf2, dat1)
+        self.validate_action4(wf2, sub1)
+        self.validate_trigger2(wf2, sub1)
 
     def validate_datastore1(self):
         datastore = self.sync_manager.find_datastore(
@@ -269,6 +345,77 @@ class TestDartModel(object):
         assert dataset.data.name == self.DATASET1_NAME
         assert dataset.data.table_name == 'table1'
         # assert dataset.data.user_id == 'user1'
+        return dataset
+
+    def validate_datastore2(self):
+        datastore = self.sync_manager.find_datastore(
+            self.DATASTORE2_NAME, self.DATASTORE2_STATE)
+        self.validate_object(datastore)
+
+        assert datastore.data.concurrency == 1
+        assert datastore.data.engine_name == 'no_op_engine'
+        assert datastore.data.name == self.DATASTORE2_NAME
+        assert datastore.data.state == 'ACTIVE'
+        return datastore
+
+    def validate_workflow2(self, datastore):
+        workflow = self.sync_manager.find_workflow(
+            self.WORKFLOW2_NAME, datastore)
+        self.validate_object(workflow)
+
+        assert workflow.data.concurrency == 1
+        assert workflow.data.engine_name == 'no_op_engine'
+        assert workflow.data.name == self.WORKFLOW2_NAME
+        return workflow
+
+    def validate_action3(self, workflow, dataset):
+        action = self.sync_manager.find_action(self.ACTION3_NAME, workflow)
+        self.validate_object(action)
+
+        assert action.data.args == {
+            'dataset_id': dataset.id
+        }
+        assert action.data.action_type_name == 'fake_load_dataset'
+        assert action.data.engine_name == 'no_op_engine'
+        assert action.data.name == self.ACTION3_NAME
+        assert action.data.order_idx == 0
+        assert action.data.state == 'TEMPLATE'
+
+    def validate_action4(self, workflow, subscription):
+        action = self.sync_manager.find_action(self.ACTION4_NAME, workflow)
+        self.validate_object(action)
+
+        assert action.data.args == {
+            'subscription_id': subscription.id
+        }
+        assert action.data.action_type_name == 'consume_subscription'
+        assert action.data.engine_name == 'no_op_engine'
+        assert action.data.order_idx == 1
+        assert action.data.state == 'TEMPLATE'
+        return action
+
+    def validate_subscription1(self, dataset):
+        subscription = self.sync_manager.find_subscription(
+            self.SUBSCRIPTION1_NAME)
+        self.validate_object(subscription)
+
+        assert subscription.data.name == self.SUBSCRIPTION1_NAME
+        assert subscription.data.dataset_id == dataset.id
+        assert subscription.data.s3_path_start_prefix_inclusive == 's3://s3-rpt-uss-dat-warehouse/dart-tests/tst/'
+        # assert subscription.data.state == 'INACTIVE'
+        return subscription
+
+    def validate_trigger2(self, workflow, subscription):
+        trigger = self.sync_manager.find_trigger(self.TRIGGER2_NAME, workflow)
+        self.validate_object(trigger)
+
+        assert trigger.data.args == {
+            'subscription_id': subscription.id,
+            'unconsumed_data_size_in_bytes': 20000
+        }
+        assert trigger.data.name == self.TRIGGER2_NAME
+        assert trigger.data.trigger_type_name == 'subscription_batch'
+        return trigger
 
     def validate_object(self, obj):
         assert obj.created is not None and isinstance(obj.created, basestring)
@@ -285,4 +432,4 @@ class TestDartModel(object):
         if hasattr(obj.data, 'on_success_email'):
             assert obj.data.on_success_email == self.DEFAULTS[
                 'on_success_email']
-        assert obj.data.tags == self.DEFAULTS['tags']
+        assert set(self.DEFAULTS['tags']) <= set(obj.data.tags)
