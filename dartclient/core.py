@@ -22,7 +22,7 @@
 
 
 from bravado.client import SwaggerClient
-from bravado.requests_client import BasicAuthenticator
+from bravado.requests_client import BasicAuthenticator, RequestsClient
 
 
 def create_basic_authenticator(host, username, password):
@@ -60,11 +60,14 @@ def create_client(origin_url=None, config=None, api_url=None, authenticator=None
         spec_url = api_url + '/swagger.json'
     else:
         raise RuntimeError('One of origin_url or api_url must be specified')
-    client = SwaggerClient.from_url(spec_url=spec_url, config=config)
+
+    http_client = RequestsClient()
+    http_client.authenticator = authenticator
+    client = SwaggerClient.from_url(spec_url=spec_url, config=config, http_client=http_client)
+
     if api_url:
         client.swagger_spec.api_url = api_url
-    if authenticator:
-        client.swagger_spec.http_client.authenticator = authenticator
+
     return client
 
 
